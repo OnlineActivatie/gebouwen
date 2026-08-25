@@ -24,18 +24,18 @@
   - Verzend-/opslagstoring voor duurzame borging
   - BAG-bouwjaarcorrectie met behoud van de bronwaarde
 
-  MOCKSERVICES
+  DEMOSERVICES
   - KVK-zoek- en vestigingsservice
   - Adres/BAG-zoek- en verrijkingsservice
   - Deterministische premie-inschattingsservice
   - Postcode-routeringsservice
-  - Idempotente Hot Lead-service met duurzame mockregistratie en retry
+  - Idempotente Hot Lead-service met duurzame demoregistratie en retry
   - Interne analytics-eventlogger zonder direct identificerende gegevens
 
   BEKENDE PROTOTYPEBEPERKINGEN
   - Alle bedrijfs-, BAG-, tarief-, regio- en leadgegevens zijn demodata.
   - Er zijn geen echte API-calls, geen backend en geen koppelingen met QIS, CRM of STP.
-  - De tariefberekening is uitsluitend een transparante mock en geen echt Univé-tariefmodel.
+  - De tariefberekening is uitsluitend een transparante demo en geen echt Univé-tariefmodel.
   - Opslag vindt alleen plaats in sessionStorage van de huidige browsertab en kan via het demopaneel worden gewist.
   - De regionale routering is fictief en uitsluitend bedoeld om interaction design en foutafhandeling te testen.
 -->
@@ -45,8 +45,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
-  <title>Premie-inschatting gebouwenverzekering | Univé Zakelijk - Prototype</title>
+  <title>Premie-inschatting gebouwenverzekering | Univé Zakelijk</title>
   <style>
+    /*
+      Typografie afgestemd op unive.nl.
+      Univé gebruikt een duidelijk verschil tussen een uitgesproken, afgeronde
+      kopstijl en een rustige sans-serif voor functionele/bodytekst. De exacte
+      merkfontbestanden worden niet gekopieerd; deze webveilige stack benadert
+      de live website en voorkomt browser-synthese door alleen echte weights
+      400/600/700/800 te gebruiken.
+    */
+    @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,700;6..12,800&family=Open+Sans:wght@400;600;700;800&display=swap');
     :root {
       --green-950: #00351f;
       --green-900: #004f2f;
@@ -90,7 +99,10 @@
       --content-width: 1180px;
       --form-width: 760px;
       --side-width: 300px;
-      --font: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-body: "Open Sans", Arial, Helvetica, sans-serif;
+      --font-display: "Nunito Sans", "Open Sans", Arial, Helvetica, sans-serif;
+      --font-ui: "Open Sans", Arial, Helvetica, sans-serif;
+      --font: var(--font-body);
     }
 
     *, *::before, *::after { box-sizing: border-box; }
@@ -107,6 +119,53 @@
       text-rendering: optimizeLegibility;
     }
     button, input, select, textarea { font: inherit; }
+
+    /* Univé typografische rollen */
+    h1, h2, h3, h4, h5, h6,
+    .premium-title, .confirmation h2, .result-status-card h3,
+    .selected-title, .subheading, .side-card h2, .context-title {
+      font-family: var(--font-display);
+      font-weight: 800;
+      letter-spacing: -0.018em;
+    }
+
+    p, li, dd, dt, .title-meta, .field-hint, .radio-description,
+    .selected-meta, .result-meta, .summary-note, .side-card p,
+    .context-list, .footer-note {
+      font-family: var(--font-body);
+      font-weight: 400;
+    }
+
+    .main-nav, .header-link, .breadcrumb, .progress-label,
+    .eyebrow, .field-label, .radio-title, .data-label, .data-value,
+    .summary-label, .summary-value, label, legend, .btn, button,
+    input, select, textarea {
+      font-family: var(--font-ui);
+    }
+
+    .main-nav, .header-link, .breadcrumb { font-weight: 600; }
+    .field-label, .radio-title, .data-value, .summary-value { font-weight: 700; }
+    .btn, button { font-weight: 700; letter-spacing: 0; }
+    input, select, textarea { font-weight: 400; letter-spacing: 0; }
+
+    /* Typografische schaal dichter bij unive.nl */
+    #page-title {
+      font-family: var(--font-display);
+      font-weight: 800;
+      letter-spacing: -0.028em;
+      line-height: 1.12;
+    }
+    #step-title {
+      font-family: var(--font-display);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      line-height: 1.16;
+    }
+    #step-intro {
+      font-family: var(--font-body);
+      font-weight: 400;
+      line-height: 1.6;
+    }
     button, a { -webkit-tap-highlight-color: transparent; }
     a { color: var(--purple-700); }
     img, svg { display: block; }
@@ -180,7 +239,7 @@
       color: #333;
       text-decoration: none;
       font-size: .94rem;
-      font-weight: 650;
+      font-weight: 600;
     }
     .main-nav a:hover { color: var(--green-700); }
     .header-actions { display: flex; align-items: center; gap: 10px; }
@@ -308,7 +367,7 @@
       background: var(--green-500);
       color: white;
     }
-    .progress-label { display: block; color: #737373; font-size: .78rem; font-weight: 650; }
+    .progress-label { display: block; color: #737373; font-size: .78rem; font-weight: 600; }
     .progress-item.is-active .progress-label { color: var(--green-800); font-weight: 800; }
     .progress-item.is-complete .progress-label { color: #3d5949; }
 
@@ -375,7 +434,7 @@
       padding: 11px 20px;
       cursor: pointer;
       text-decoration: none;
-      font-weight: 780;
+      font-weight: 700;
       line-height: 1.2;
       transition: background-color .15s ease, border-color .15s ease, transform .15s ease, box-shadow .15s ease;
     }
@@ -413,7 +472,7 @@
       display: block;
       margin: 0 0 7px;
       color: #2d2d2d;
-      font-weight: 750;
+      font-weight: 700;
     }
     .field-label .optional { color: var(--muted); font-size: .84rem; font-weight: 500; }
     .field-hint { margin: 6px 0 0; color: var(--muted); font-size: .86rem; }
@@ -490,7 +549,7 @@
       margin: 7px 0 0;
       color: var(--error);
       font-size: .86rem;
-      font-weight: 650;
+      font-weight: 600;
     }
     .field-error::before {
       content: "!";
@@ -556,7 +615,7 @@
       background: var(--purple-600);
     }
     .radio-copy { min-width: 0; }
-    .radio-title { display: block; color: #2d2d2d; font-weight: 750; line-height: 1.32; }
+    .radio-title { display: block; color: #2d2d2d; font-weight: 700; line-height: 1.32; }
     .radio-description { display: block; margin-top: 3px; color: var(--muted); font-size: .82rem; line-height: 1.4; }
 
     .check-row {
@@ -601,7 +660,7 @@
       border: 2px solid currentColor;
       border-radius: 50%;
       font-size: .75rem;
-      font-weight: 900;
+      font-weight: 800;
     }
     .block-copy { min-width: 0; }
     .block-copy strong { display: block; margin-bottom: 2px; }
@@ -646,7 +705,7 @@
     .result-title { display: block; color: #2d2d2d; font-weight: 800; }
     .result-official { display: block; margin-top: 1px; color: var(--muted); font-size: .82rem; }
     .result-meta { display: block; margin-top: 7px; color: #555; font-size: .86rem; }
-    .result-arrow { color: var(--purple-700); font-weight: 900; }
+    .result-arrow { color: var(--purple-700); font-weight: 800; }
     .selected-card,
     .data-card {
       border: 1px solid var(--border);
@@ -712,7 +771,7 @@
       color: #555;
       cursor: help;
       font-size: .75rem;
-      font-weight: 900;
+      font-weight: 800;
     }
     .tooltip-content {
       position: absolute;
@@ -766,9 +825,9 @@
       flex-wrap: wrap;
       gap: 8px 10px;
     }
-    .premium-estimate-prefix { color: var(--ink-soft); font-size: 1rem; font-weight: 750; }
+    .premium-estimate-prefix { color: var(--ink-soft); font-size: 1rem; font-weight: 700; }
     .premium-estimate strong { font-size: clamp(2rem, 6vw, 3rem); line-height: 1; letter-spacing: -.035em; }
-    .premium-period { color: var(--muted); font-weight: 650; }
+    .premium-period { color: var(--muted); font-weight: 600; }
     .premium-rounding { color: var(--muted); font-size: .82rem; }
     .premium-disclaimer {
       margin: 12px 0 0;
@@ -795,7 +854,7 @@
       background: var(--green-100);
       color: var(--green-900);
       font-size: 1.2rem;
-      font-weight: 900;
+      font-weight: 800;
     }
     .result-status-card.warning .result-status-icon { background: var(--warning-bg); color: var(--warning); }
     .result-status-card.error .result-status-icon { background: var(--error-bg); color: var(--error); }
@@ -830,7 +889,7 @@
     }
     .summary-row:last-child { border-bottom: 0; }
     .summary-label { color: var(--muted); font-size: .86rem; }
-    .summary-value { font-weight: 650; overflow-wrap: anywhere; }
+    .summary-value { font-weight: 600; overflow-wrap: anywhere; }
     .summary-note { color: var(--muted); font-size: .8rem; font-weight: 500; }
 
     .aside-stack { display: grid; gap: 14px; position: sticky; top: 110px; }
@@ -872,7 +931,7 @@
       background: var(--green-500);
       color: white;
       font-size: .72rem;
-      font-weight: 900;
+      font-weight: 800;
     }
     .context-card { border-top: 4px solid var(--green-600); }
     .context-title { margin: 0; color: var(--green-900); font-size: .96rem; }
@@ -924,7 +983,7 @@
       padding: 16px;
     }
     .reference-label { display: block; color: var(--muted); font-size: .78rem; }
-    .reference-value { display: block; margin-top: 3px; color: #303030; font-size: 1.14rem; font-weight: 850; letter-spacing: .04em; }
+    .reference-value { display: block; margin-top: 3px; color: #303030; font-size: 1.14rem; font-weight: 800; letter-spacing: .04em; }
     .confirmation-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 26px; }
 
     .toast-region {
@@ -1142,7 +1201,7 @@
       <div class="header-actions">
         <a class="header-link" href="#" data-prototype-link>Klantenservice</a>
         <a class="header-link" href="#" data-prototype-link>Mijn Univé</a>
-        <span class="prototype-badge">Prototype</span>
+
       </div>
     </div>
   </header>
@@ -1163,9 +1222,9 @@
         <div>
           <p class="eyebrow">Univé Zakelijk</p>
           <h1 id="page-title">Premie-inschatting gebouwenverzekering</h1>
-          <p class="title-meta">Gratis en vrijblijvend - dit prototype maakt geen verzekeringsaanvraag aan.</p>
+          <p class="title-meta">Gratis en vrijblijvend.</p>
         </div>
-        <span class="prototype-badge">Demo met fictieve gegevens</span>
+
       </div>
     </div>
   </section>
@@ -1189,17 +1248,10 @@
         <div class="side-card-body">
           <h2>Hulp nodig?</h2>
           <p>Een zakelijke adviseur helpt je graag met vragen over het gebouw of de benodigde gegevens.</p>
-          <a class="side-phone" href="tel:+31880000000" aria-label="Bel fictief nummer 088 000 00 00">088 - 000 00 00 <span aria-hidden="true">(fictief)</span></a>
+    
         </div>
       </section>
 
-      <section class="side-card">
-        <div class="side-card-body">
-          <h2>Later verdergaan?</h2>
-          <p>In dit prototype bewaren we je voortgang alleen in deze browsertab.</p>
-          <button type="button" class="btn btn-secondary btn-small btn-full" id="save-progress">Bewaar je gegevens</button>
-        </div>
-      </section>
 
       <section class="side-card">
         <div class="side-card-body">
@@ -1231,7 +1283,7 @@
           <a href="#" data-prototype-link>Privacy</a>
         </nav>
       </div>
-      <p class="footer-note">Prototype voor review en gebruikerstesten. Er worden geen echte KVK-, BAG-, premie-, CRM-, QIS- of polisprocessen uitgevoerd.</p>
+
     </div>
   </footer>
 
@@ -1239,11 +1291,11 @@
   <div class="sr-only" id="live-region" aria-live="polite" aria-atomic="true"></div>
   <div class="sr-only" id="assertive-region" aria-live="assertive" aria-atomic="true"></div>
 
-  <button type="button" class="demo-toggle" id="demo-toggle" aria-expanded="false" aria-controls="demo-panel">
+  <button type="button" class="demo-toggle" id="demo-toggle" aria-expanded="false" aria-controls="demo-panel" hidden>
     <span aria-hidden="true">⚙</span> Demo
   </button>
 
-  <section class="demo-panel" id="demo-panel" aria-labelledby="demo-title" hidden>
+  <section class="demo-panel" id="demo-panel" aria-labelledby="demo-title" hidden aria-hidden="true">
     <div class="demo-panel-head">
       <div>
         <h2 id="demo-title">Demobediening</h2>
@@ -1275,9 +1327,9 @@
     contentVersion: "GBV-CONTENT-1.0-demo",
     questionVersion: "GBV-QUESTIONS-0.9",
     ruleVersion: "GBV-RULES-0.9-demo",
-    tariffVersion: "MOCK-TARIFF-2026-07-GUESS",
-    modelVersion: "MOCK-MODEL-1.1",
-    routingVersion: "MOCK-RU-POSTCODE-1.0",
+    tariffVersion: "DEMO-TARIFF-2026-07-GUESS",
+    modelVersion: "DEMO-MODEL-1.1",
+    routingVersion: "DEMO-RU-POSTCODE-1.0",
     storageKey: "unive-gbv-prototype-session-v2",
     debounceMs: 420,
     serviceDelay: { search: 650, detail: 500, premium: 1150, lead: 1250 },
@@ -1504,9 +1556,9 @@
   }
 
   /* ========================================================================
-     3. MOCKDATA
+     3. DEMODATA
      ======================================================================== */
-  const MOCK_COMPANIES = [
+  const DEMO_COMPANIES = [
     {
       id: "CMP-OFFICE-01",
       tradeName: "Jansen Vastgoed & Advies",
@@ -1564,7 +1616,7 @@
     }
   ];
 
-  const MOCK_BUILDINGS = [
+  const DEMO_BUILDINGS = [
     {
       addressId: "ADDR-ZWOLLE-01",
       address: { street: "Hoofdstraat", houseNumber: "12", addition: "", postcode: "8011 AB", city: "Zwolle", country: "NL" },
@@ -1729,6 +1781,8 @@
         manual: { street: "", houseNumber: "", addition: "", postcode: "", city: "" },
         interest: null,
         rebuildKnown: "yes",
+        constructionType: null,
+        roofType: null,
         fields: {
           buildYear: createValueObject(),
           area: createValueObject(),
@@ -1739,6 +1793,7 @@
       risk: {
         destination: null,
         mixedDescription: "",
+        otherDescription: "",
         dominantUse: null,
         hospitalityType: null,
         professionalKitchen: null,
@@ -2023,7 +2078,7 @@
           missingFactorIds: [],
           confidenceScore: null,
           confidenceClass: "notApplicable",
-          assumptions: ["De combinatie van gebruiksfuncties valt buiten het gevalideerde mockmodel."]
+          assumptions: ["De combinatie van gebruiksfuncties vraagt om persoonlijke beoordeling."]
         };
       }
 
@@ -2031,7 +2086,6 @@
       const requiredFactors = [
         ["destination", state.risk.destination],
         ["buildYear", state.building.fields.buildYear.effectiveValue],
-        ["area", state.building.fields.area.effectiveValue],
         ["rebuildValue", state.building.rebuildKnown === "yes" ? state.building.fields.rebuildValue.effectiveValue : null],
         ["interest", state.building.interest],
         ["coverage", state.coverage.intent]
@@ -2126,7 +2180,7 @@
           };
         }
         confidence -= 7;
-        assumptions.push("Een energieopslagsysteem tot en met 20 kWh is meegenomen als mock-risicofactor.");
+        assumptions.push("Een energieopslagsysteem tot en met 20 kWh is meegenomen als risicofactor.");
       }
       if (state.risk.storage === "unknown") {
         return {
@@ -2143,7 +2197,7 @@
 
       // RULE-012 en RULE-013: zonnepanelen en Scope 10 worden conditioneel beoordeeld.
       if (state.risk.solar === "yes") {
-        if (!state.risk.solarCount || !state.risk.solarLocation || !state.risk.solarPartOfBuilding || !state.risk.scope10) {
+        if (!state.risk.solarCount || !state.risk.solarLocation || (state.risk.solarLocation !== "ground" && !state.risk.solarPartOfBuilding) || !state.risk.scope10) {
           return {
             status: "insufficientData",
             route: "advisor",
@@ -2158,7 +2212,7 @@
         if (["expired", "none", "unknown"].includes(state.risk.scope10)) {
           confidence -= 13;
           reasons.push("SCOPE10_ATTENTION");
-          assumptions.push("De Scope 10-status verlaagt de betrouwbaarheid van de mockindicatie.");
+          assumptions.push("De Scope 10-status verlaagt de betrouwbaarheid van de premie-inschatting.");
           if (state.risk.solarCount === "more50") {
             return {
               status: "outsideModel",
@@ -2172,7 +2226,7 @@
             };
           }
         } else {
-          assumptions.push("Zonnepanelen met een geldig Scope 10-rapport zijn als mockfactor meegenomen.");
+          assumptions.push("Zonnepanelen met een geldig Scope 10-rapport zijn meegenomen als risicofactor.");
         }
       }
 
@@ -2235,7 +2289,7 @@
   };
 
   /* ========================================================================
-     9. MOCKSERVICES
+     9. DEMOSERVICES
      ======================================================================== */
   function serviceError(code, message, retryable = true, extra = {}) {
     const error = new Error(message);
@@ -2245,7 +2299,7 @@
     return error;
   }
 
-  const MockKvkService = {
+  const DemoKvkService = {
     async search(term) {
       const started = performance.now();
       await delay(CONFIG.serviceDelay.search);
@@ -2254,7 +2308,7 @@
       }
       const query = String(term).trim().toLowerCase();
       if (query.includes("geenresultaat") || query.includes("geen resultaat")) return [];
-      let matches = MOCK_COMPANIES.filter(company => [
+      let matches = DEMO_COMPANIES.filter(company => [
         company.tradeName,
         company.officialName,
         company.address.city
@@ -2292,7 +2346,7 @@
     }
   };
 
-  const MockBagService = {
+  const DemoBagService = {
     async search(term) {
       const started = performance.now();
       await delay(CONFIG.serviceDelay.search);
@@ -2301,7 +2355,7 @@
       }
       const query = String(term).toLowerCase().replace(/\s+/g, " ").trim();
       if (query.includes("geenresultaat") || query.includes("geen resultaat")) return [];
-      const matches = MOCK_BUILDINGS.filter(item => {
+      const matches = DEMO_BUILDINGS.filter(item => {
         const addressText = joinAddress(item.address).toLowerCase();
         return addressText.includes(query) || query.split(" ").every(part => addressText.includes(part));
       }).slice(0, 6);
@@ -2321,14 +2375,14 @@
         throw serviceError("BAG_TEMPORARY_UNAVAILABLE", "De BAG-demovoorziening is tijdelijk niet beschikbaar.");
       }
       const target = joinAddress(address).toLowerCase();
-      let match = MOCK_BUILDINGS.find(item => joinAddress(item.address).toLowerCase() === target);
+      let match = DEMO_BUILDINGS.find(item => joinAddress(item.address).toLowerCase() === target);
       if (!match) {
         const generic = {
           addressId: `ADDR-GENERIC-${hashString(target)}`,
           address: deepClone(address),
           objects: [{
             objectId: `BAG-DEMO-${hashString(target)}`,
-            label: "Gebouw op dit adres - demomatch",
+            label: "Gebouw op dit adres",
             buildYear: 2002,
             area: 500,
             useFunction: "Gebruiksfunctie nog te bevestigen",
@@ -2348,7 +2402,7 @@
     }
   };
 
-  const MockPremiumService = {
+  const DemoPremiumService = {
     async calculate() {
       const started = performance.now();
       const requestId = makeId("PREQ");
@@ -2361,7 +2415,7 @@
       await delay(CONFIG.serviceDelay.premium);
       if (state.demo.premiumError) {
         Analytics.log("gbv_premium_error", {
-          service: "mockPremiumService",
+          service: "demoPremiumService",
           errorCode: "PREMIUM_TEMPORARY_UNAVAILABLE",
           retryable: true,
           latencyBand: latencyBand(performance.now() - started)
@@ -2403,7 +2457,7 @@
       const destinationFactor = state.risk.destination === "vve" ? 0.78 : 1;
       const coverageFactor = ({ fire: 0.82, fireStorm: 1, extended: 1.18, unknown: 1.08 })[state.coverage.intent] || 1;
       const ageFactor = buildYear < 1940 ? 1.32 : buildYear < 1970 ? 1.18 : buildYear < 1990 ? 1.08 : buildYear >= 2015 ? 0.93 : 1;
-      const areaFactor = area > 2500 ? 1.09 : area < 400 ? 0.96 : 1;
+      const areaFactor = Number.isFinite(area) ? (area > 2500 ? 1.09 : area < 400 ? 0.96 : 1) : 1;
       const solarFactor = state.risk.solar === "yes"
         ? ({ upTo20: 1.012, from21to50: 1.028, more50: 1.05 })[state.risk.solarCount] || 1.03
         : 1;
@@ -2414,7 +2468,7 @@
         : 1;
       const asbestosFactor = state.risk.asbestos === "yes" ? 1.07 : state.risk.asbestos === "unknown" ? 1.03 : 1;
 
-      // De mockservice maakt één deterministische 'best estimate' op basis van de variabelen.
+      // De demoservice maakt één deterministische 'best estimate' op basis van de variabelen.
       // Voor de presentatie wordt deze uitkomst afgerond om schijnprecisie te voorkomen.
       const rawMonthlyEstimate = (rebuildValue / 1000) * 0.86 * destinationFactor * coverageFactor * ageFactor * areaFactor * solarFactor * scope10Factor * storageFactor * asbestosFactor / 12;
       const estimatedAmount = Math.max(20, roundTo(rawMonthlyEstimate, CONFIG.premiumRoundingUnit));
@@ -2422,7 +2476,7 @@
       const assumptions = [
         `Gebruiksroute: ${state.risk.destination === "vve" ? "VvE met woonfunctie" : "kantoor"}.`,
         `Herbouwwaarde: ${formatMoney(rebuildValue)}.`,
-        `Bouwjaar: ${buildYear}; oppervlakte: ${formatNumber(area)} m².`,
+        Number.isFinite(area) ? `Bouwjaar: ${buildYear}; oppervlakte: ${formatNumber(area)} m².` : `Bouwjaar: ${buildYear}.`,
         `Dekkingsintentie: ${coverageLabel(state.coverage.intent)}.`,
         state.risk.solar === "yes" ? `Zonnepanelen: ${labelFrom("solarCount", state.risk.solarCount)}; Scope 10: ${labelFrom("scope10", state.risk.scope10)}.` : "Geen zonnepanelen opgegeven.",
         state.risk.storage === "yes" ? `Energieopslag: ${formatNumber(storageCapacity)} kWh, ${labelFrom("storageLocation", state.risk.storageLocation)}.` : "Geen energieopslag opgegeven.",
@@ -2448,7 +2502,7 @@
     }
   };
 
-  const MockRoutingService = {
+  const DemoRoutingService = {
     async route(postcode) {
       await delay(300);
       const normalised = normalisePostcode(postcode);
@@ -2580,7 +2634,7 @@
   let activeLeadPromise = null;
   let activeLeadKey = null;
 
-  const MockLeadService = {
+  const DemoLeadService = {
     async create(payload, idempotencyKey) {
       const payloadHash = hashString(JSON.stringify(payload));
 
@@ -2611,12 +2665,12 @@
           throw serviceError("LEAD_DURABLE_STORAGE_UNAVAILABLE", "Het contactverzoek kon niet duurzaam worden opgeslagen.");
         }
 
-        const routing = await MockRoutingService.route(payload.building.address.postcode);
+        const routing = await DemoRoutingService.route(payload.building.address.postcode);
         const leadId = `LEAD-${hashString(idempotencyKey).toUpperCase()}`;
         const customerReference = `GBV-${leadId.slice(-6)}`;
         const createdAt = nowIso();
 
-        // RULE-029: succesbevestiging is alleen toegestaan na duurzame mockregistratie en route of fallback.
+        // RULE-029: succesbevestiging is alleen toegestaan na duurzame demoregistratie en route of fallback.
         const initialLeadStatus = "created";
         state.lead = {
           status: initialLeadStatus,
@@ -2819,7 +2873,7 @@
           <div class="data-row"><dt class="data-label">Vestigingsnummer</dt><dd class="data-value">${escapeHtml(company.branchNumber || "Niet beschikbaar")}</dd></div>
           <div class="data-row"><dt class="data-label">Activiteitscategorie</dt><dd class="data-value">${escapeHtml(company.sbiCategory || "Nog te bevestigen")}</dd></div>
         </dl>
-        <p class="field-source"><span class="source-chip">${state.company.sourceStatus === "manual" ? "Handmatig" : "Mock-KVK"}</span> Demodata, geen echte broninformatie.</p>
+        <p class="field-source"><span class="source-chip">${state.company.sourceStatus === "manual" ? "Handmatig" : "KVK"}</span> Controleer de gegevens en pas ze aan als iets niet klopt.</p>
       </div>`;
   }
 
@@ -2843,7 +2897,7 @@
           <div class="data-row"><dt class="data-label">Oppervlakte</dt><dd class="data-value">${escapeHtml(areaText)}</dd></div>
           <div class="data-row"><dt class="data-label">BAG-matchstatus</dt><dd class="data-value"><span class="status-pill ${state.building.sourceStatus === "matched" ? "good" : "warn"}">${escapeHtml(state.building.sourceStatus === "matched" ? "Match gevonden" : state.building.sourceStatus === "manual" ? "Handmatige invoer" : "Controle nodig")}</span></dd></div>
         </dl>
-        <p class="field-source"><span class="source-chip">${state.building.sourceStatus === "manual" ? "Handmatig" : "Mock-BAG"}</span> Bronwaarden zijn controleerbaar en worden niet als echte BAG-data gepresenteerd.</p>
+        <p class="field-source"><span class="source-chip">${state.building.sourceStatus === "manual" ? "Handmatig" : "BAG"}</span> Controleer de gegevens en pas ze aan als iets niet klopt.</p>
       </div>`;
   }
 
@@ -3009,63 +3063,63 @@
   const STEP_CONTEXT = {
     intro: {
       title: "Wat kun je verwachten?",
-      text: "Je doorloopt een korte orientatie. Een adviseur controleert later de gegevens en bespreekt wat mogelijk is.",
-      bullets: ["Geen aanvraag of offerte", "Geen dekking of polis", "Wel een indicatie of duidelijke adviesroute"]
+      text: "Je beantwoordt een aantal vragen over je bedrijf en gebouw. Daarna zie je direct of we een premie-inschatting kunnen geven.",
+      bullets: ["Bedrijfsgegevens", "Gebouw en risico’s", "Premie-inschatting"]
     },
     company: {
       title: "Waarom zoeken we je bedrijf?",
-      text: "Met een vestiging kunnen we relevante bedrijfsgegevens als voorstel gebruiken. Alle resultaten in dit prototype zijn fictief.",
-      bullets: ["Zoeken vanaf 3 tekens", "Specifieke vestiging selecteren", "Geen echte KVK-gegevens"]
+      text: "Door je bedrijf te selecteren kunnen we een aantal gegevens alvast voor je invullen.",
+      bullets: ["Zoek op bedrijfsnaam", "Kies de juiste vestiging", "Controleer de gegevens"]
     },
     building: {
       title: "Het gebouw is leidend",
-      text: "Het vestigingsadres is alleen een voorstel. Voor calculatie en regionale routering gebruiken we het bevestigde gebouwadres.",
-      bullets: ["Een gebouw per premie-inschatting", "BAG-bronwaarde blijft zichtbaar", "Handmatige route bij geen match"]
+      text: "Controleer welk gebouw je wilt verzekeren en pas het adres aan als dat nodig is.",
+      bullets: ["Eén gebouw per premie-inschatting", "Controleer het adres", "Vul gegevens aan waar nodig"]
     },
     usage: {
       title: "Feitelijk gebruik telt",
-      text: "De registratie kan afwijken van wat er werkelijk in het gebouw gebeurt. Daarom vragen we het actuele gebruik altijd na.",
-      bullets: ["Kantoor en VvE kunnen calculeerbaar zijn", "Horeca is altijd intake-only", "Gemengd gebruik vraagt meestal beoordeling"]
+      text: "Het actuele gebruik van het gebouw is belangrijk voor de premie-inschatting.",
+      bullets: ["Kies het feitelijke gebruik", "Geef bijzonderheden aan", "We stellen alleen relevante vervolgvragen"]
     },
     details: {
-      title: "Controleer de bronwaarden",
-      text: "Je correctie wordt gebruikt voor de indicatie. De oorspronkelijke mock-BAG-waarde blijft daarnaast bewaard.",
-      bullets: ["Herbouwwaarde is geen WOZ-waarde", "Premiekritieke wijzigingen vragen herberekening", "Onbekend mag, maar kan een bedrag blokkeren"]
+      title: "Controleer de gebouwgegevens",
+      text: "We hebben enkele gegevens alvast ingevuld. Controleer deze en pas ze aan als dat nodig is.",
+      bullets: ["Herbouwwaarde is geen WOZ-waarde", "Controleer de ingevulde gegevens", "Vul in wat je weet"]
     },
     riskInstallations: {
       title: "Installaties en brandrisico",
-      text: "Vervolgvragen verschijnen alleen wanneer zonnepanelen of energieopslag relevant zijn.",
-      bullets: ["Weet ik niet blijft een open punt", "Scope 10 is geen automatische garantie", "Hogere of onbekende opslagcapaciteit kan beoordeling vragen"]
+      text: "We vragen naar installaties die invloed kunnen hebben op het risico van het gebouw.",
+      bullets: ["Zonnepanelen", "Energieopslag", "Aanvullende veiligheidsinformatie"]
     },
     riskOperations: {
       title: "Gebruik en overige risico's",
-      text: "Leegstand, asbest en brandgevaarlijk werk kunnen de betrouwbaarheid van een online indicatie beperken.",
-      bullets: ["Geen harde online afwijzing", "Risicofactoren blokkeren een Hot Lead niet", "Adviseur ontvangt open punten"]
+      text: "Deze factoren kunnen invloed hebben op de verzekeringsmogelijkheden en premie.",
+      bullets: ["Leegstand", "Asbest", "Brandgevaarlijke werkzaamheden"]
     },
     coverage: {
       title: "Dekkingsintentie",
-      text: "Je keuze helpt de mockberekening en het adviesgesprek. Het is nadrukkelijk geen definitieve dekkingskeuze.",
-      bullets: ["Brand", "Brand en storm", "Uitgebreide gevaren of nog onbekend"]
+      text: "Kies welke dekking het beste aansluit bij wat je wilt verzekeren.",
+      bullets: ["Brand", "Brand en storm", "Uitgebreide gevaren"]
     },
     premium: {
-      title: "Indicatief en niet-bindend",
-      text: "Alleen bij voldoende mock-confidence tonen we één afgeronde premieschatting. Anders volgt een verklaarde adviesroute.",
-      bullets: ["Geen exact tarief of offerte", "Geen recht op verzekering", "Definitieve premie volgt na advies en acceptatie"]
+      title: "Je premie-inschatting",
+      text: "Op basis van je antwoorden laten we zien of we direct een premie-inschatting kunnen geven.",
+      bullets: ["Gebaseerd op je antwoorden", "Vrijblijvende indicatie", "Persoonlijk contact als dat nodig is"]
     },
     contact: {
       title: "Persoonlijke opvolging",
-      text: "Contactgegevens worden in dit prototype alleen in deze browsertab bewaard en gebruikt voor een fictief contactverzoek.",
-      bullets: ["Regionale route op gebouwpostcode", "Marketingtoestemming is optioneel", "Contactmoment is een voorkeur, geen garantie"]
+      text: "Laat je contactgegevens achter als je de premie-inschatting wilt bespreken met een zakelijke adviseur.",
+      bullets: ["Kies hoe we contact opnemen", "Geef eventueel een voorkeur voor het moment", "Controleer je gegevens voor verzending"]
     },
     summary: {
       title: "Controle voor verzending",
-      text: "Controleer alle gegevens en pas onderdelen aan voordat je het contactverzoek expliciet verstuurt.",
-      bullets: ["Geen verzekeringsaanvraag", "Geen offerte of dekking", "Een idempotente Hot Lead per verzending"]
+      text: "Controleer je gegevens en pas ze aan als dat nodig is.",
+      bullets: ["Controleer je antwoorden", "Pas gegevens aan", "Verstuur je contactverzoek"]
     },
     confirmation: {
       title: "Wat gebeurt er nu?",
-      text: "De mock-Hot Lead is duurzaam geregistreerd en gerouteerd of veilig in een centrale fallback geplaatst.",
-      bullets: ["Adviseur neemt naar verwachting binnen een werkdag contact op", "Definitieve beoordeling volgt later", "Je kunt een nieuwe demo starten"]
+      text: "Je contactverzoek is ontvangen en doorgestuurd voor persoonlijke opvolging.",
+      bullets: ["Een adviseur bekijkt je gegevens", "We nemen contact met je op", "Daarna bespreken we de mogelijkheden"]
     }
   };
 
@@ -3150,14 +3204,14 @@
     return `
       <div class="intro-hero">
         <div>
-          ${stepHeader("Gebouwenverzekering", "Vrijblijvend een premie-inschatting", "Op basis van je bedrijfs- en gebouwgegevens bekijken we of we direct een betrouwbare indicatie kunnen geven.")}
+          ${stepHeader("Gebouwenverzekering", "Vrijblijvend een premie-inschatting", "We combineren je bedrijfsgegevens, kenmerken van het gebouw, de gewenste dekkingsrichting en relevante risicovragen. Daarmee bepalen we of we direct een indicatieve premie kunnen tonen.")}
           <ul class="intro-list">
-            <li><span class="check-icon" aria-hidden="true">✓</span><span><strong>Een gecalculeerde premieschatting</strong><br><span class="field-hint">Een afgerond bedrag op basis van de ingevulde mockvariabelen, alleen wanneer de gegevens voldoende betrouwbaar zijn.</span></span></li>
-            <li><span class="check-icon" aria-hidden="true">✓</span><span><strong>Een gerichte adviesroute</strong><br><span class="field-hint">Ook voor situaties waarin geen premiebedrag kan worden getoond.</span></span></li>
-            <li><span class="check-icon" aria-hidden="true">✓</span><span><strong>Persoonlijke opvolging</strong><br><span class="field-hint">Na expliciete verzending neemt een zakelijke adviseur naar verwachting binnen een werkdag contact op.</span></span></li>
+            <li><span class="check-icon" aria-hidden="true">✓</span><span><strong>Een onderbouwde premie-inschatting</strong><br><span class="field-hint">De indicatie is gebaseerd op onder meer het feitelijke gebruik, bouwjaar, herbouwwaarde, gekozen dekkingsrichting en relevante risicofactoren.</span></span></li>
+            <li><span class="check-icon" aria-hidden="true">✓</span><span><strong>Alleen persoonlijk advies als dat nodig is</strong><br><span class="field-hint">Als de situatie niet betrouwbaar online kan worden ingeschat, gebruiken we je antwoorden om het adviesgesprek gericht voor te bereiden.</span></span></li>
+            <li><span class="check-icon" aria-hidden="true">✓</span><span><strong>Duidelijk vervolg</strong><br><span class="field-hint">Na het verzenden van je contactverzoek beoordeelt een zakelijke adviseur de situatie en neemt naar verwachting binnen een werkdag contact op.</span></span></li>
           </ul>
-          ${infoBlock("Goed om te weten", "De uitkomst is geen offerte. Er wordt geen verzekering aangevraagd of afgesloten en er gaat geen dekking in.", "warning")}
-          <p class="field-hint" style="margin-top:16px;">Meestal kost het invullen ongeveer 5 tot 8 minuten. Dit is een indicatie, geen garantie.</p>
+
+          <p class="field-hint" style="margin-top:16px;">Meestal kost het invullen ongeveer 5 tot 8 minuten.</p>
           <div class="step-actions" style="justify-content:flex-end;">
             <div class="action-group"><button type="button" class="btn btn-primary" id="start-flow">Start premie-inschatting <span aria-hidden="true">→</span></button></div>
           </div>
@@ -3188,11 +3242,11 @@
      ======================================================================== */
   function companyResultsHtml() {
     if (state.company.searchStatus === "loading") {
-      return `<div class="info-block" role="status"><span class="spinner" aria-hidden="true"></span><div class="block-copy"><strong>We zoeken in de mock-KVK</strong><p>Even geduld. Dit zijn uitsluitend demogegevens.</p></div></div>`;
+      return `<div class="info-block" role="status"><span class="spinner" aria-hidden="true"></span><div class="block-copy"><strong>We zoeken je bedrijf</strong><p>Even geduld. We halen de beschikbare bedrijfsgegevens op.</p></div></div>`;
     }
     if (state.company.searchStatus === "error") {
       return `
-        ${infoBlock("Zoeken lukt tijdelijk niet", "Probeer het opnieuw of ga in dit prototype verder met handmatige bedrijfsgegevens.", "error")}
+        ${infoBlock("Zoeken lukt tijdelijk niet", "Probeer het opnieuw of vul je bedrijfsgegevens handmatig in.", "error")}
         <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;">
           <button type="button" class="btn btn-secondary btn-small" data-action="retry-company-search">Opnieuw proberen</button>
           <button type="button" class="btn btn-quiet btn-small" data-action="manual-company">Bedrijf handmatig invoeren</button>
@@ -3200,12 +3254,12 @@
     }
     if (state.company.searchStatus === "noResult") {
       return `
-        ${infoBlock("Geen demoresultaat gevonden", "Pas je zoekterm aan of gebruik de handmatige demovariant. Er wordt geen echte KVK-bron geraadpleegd.", "warning")}
+        ${infoBlock("Geen bedrijf gevonden", "Pas je zoekterm aan of vul je bedrijfsgegevens handmatig in.", "warning")}
         <button type="button" class="btn btn-secondary btn-small" style="margin-top:12px;" data-action="manual-company">Bedrijf handmatig invoeren</button>`;
     }
     if (state.company.searchStatus === "success") {
       return `
-        <p class="field-hint" id="company-result-count">${state.company.results.length} demoresulta${state.company.results.length === 1 ? "at" : "ten"}. Kies de juiste vestiging.</p>
+        <p class="field-hint" id="company-result-count">${state.company.results.length} resulta${state.company.results.length === 1 ? "at" : "ten"}. Kies de juiste vestiging.</p>
         <div class="results-list" aria-labelledby="company-result-count">
           ${state.company.results.map((company, index) => `
             <button type="button" class="result-card" data-company-index="${index}">
@@ -3231,9 +3285,9 @@
 
     if (state.company.manualMode) {
       return `
-        ${stepHeader("Stap 1 - Bedrijf", "Vul het bedrijf handmatig in", "Deze gecontroleerde demovariant wordt gemarkeerd als handmatige bron en kan de volledigheid van de Hot Lead verlagen.")}
+        ${stepHeader("Stap 1 - Bedrijf", "Vul je bedrijfsgegevens in", "Vul de gegevens in van het bedrijf waarvoor je de premie wilt inschatten.")}
         <form id="manual-company-form" class="step-content" novalidate>
-          ${infoBlock("Alleen voor dit prototype", "Handmatige bedrijfsgegevens zijn geen vervanging voor een echte KVK-validatie.", "warning")}
+
           <div class="field">
             <label class="field-label" for="manual-company-name">Bedrijfsnaam <span class="required-mark" aria-hidden="true">*</span></label>
             <input class="input" id="manual-company-name" name="manualCompanyName" value="${escapeHtml(state.company.manual.name)}" autocomplete="organization" ${state.ui.errors.manualCompanyName ? "aria-invalid=\"true\"" : ""} ${describedBy("manualCompanyName")}>
@@ -3256,7 +3310,7 @@
     }
 
     return `
-      ${stepHeader("Stap 1 - Bedrijf", "Zoek je bedrijf", "Zoek op bedrijfsnaam en selecteer de juiste vestiging. De resultaten hieronder zijn expliciet fictieve demodata.")}
+      ${stepHeader("Stap 1 - Bedrijf", "Zoek je bedrijf", "Zoek op bedrijfsnaam en selecteer de juiste vestiging.")}
       <form id="company-search-form" class="step-content" novalidate>
         <div class="field">
           <label class="field-label" for="company-search">Bedrijfsnaam <span class="required-mark" aria-hidden="true">*</span></label>
@@ -3272,7 +3326,7 @@
       </form>`;
   };
 
-  function selectCompany(company, sourceStatus = "mockKvk") {
+  function selectCompany(company, sourceStatus = "demoKvk") {
     const previousCompanyId = state.company.selected?.id || null;
     state.company.selected = deepClone(company);
     state.company.sourceStatus = sourceStatus;
@@ -3300,7 +3354,7 @@
       searchLengthBand: term.length < 6 ? "3-5" : term.length < 11 ? "6-10" : "11+"
     });
     try {
-      const results = await MockKvkService.search(term);
+      const results = await DemoKvkService.search(term);
       if (token !== companySearchToken) return;
       state.company.results = results;
       state.company.searchStatus = results.length ? "success" : "noResult";
@@ -3463,7 +3517,7 @@
 
   function buildingSearchResultsHtml() {
     if (state.building.searchStatus === "loading") {
-      return `<div class="info-block" role="status"><span class="spinner" aria-hidden="true"></span><div class="block-copy"><strong>We zoeken het adres en gebouw</strong><p>De mock-BAG-gegevens worden opgehaald.</p></div></div>`;
+      return `<div class="info-block" role="status"><span class="spinner" aria-hidden="true"></span><div class="block-copy"><strong>We zoeken het adres en gebouw</strong><p>We halen de beschikbare adres- en gebouwgegevens op.</p></div></div>`;
     }
     if (state.building.searchStatus === "error") {
       return `
@@ -3475,7 +3529,7 @@
     }
     if (state.building.searchStatus === "noResult") {
       return `
-        ${infoBlock("Geen BAG-demomatch gevonden", "Je kunt een ander adres zoeken of doorgaan via de handmatige adviesroute.", "warning")}
+        ${infoBlock("Geen gebouw gevonden", "Zoek op een ander adres of vul het gebouwadres handmatig in.", "warning")}
         <button type="button" class="btn btn-secondary btn-small" style="margin-top:12px;" data-action="manual-building">Gebouw handmatig invoeren</button>`;
     }
     if (state.building.searchStatus === "success") {
@@ -3486,7 +3540,7 @@
             <button type="button" class="result-card" data-address-index="${index}">
               <span>
                 <span class="result-title">${escapeHtml(joinAddress(item.address))}</span>
-                <span class="result-meta">${item.objects.length} ${item.objects.length === 1 ? "gebouwobject" : "gebouwobjecten"} in de mock-BAG</span>
+                <span class="result-meta">${item.objects.length} ${item.objects.length === 1 ? "gebouwobject" : "gebouwobjecten"} in de beschikbare gebouwgegevens</span>
               </span>
               <span class="result-arrow" aria-hidden="true">→</span>
             </button>`).join("")}
@@ -3498,7 +3552,7 @@
   STEP_RENDERERS.building = function renderBuilding() {
     if (state.building.address) {
       return `
-        ${stepHeader("Stap 2 - Gebouw", "Klopt dit gebouw?", "Het bevestigde gebouwadres wordt gebruikt voor de premie-inschatting en de fictieve regionale routering.")}
+        ${stepHeader("Stap 2 - Gebouw", "Klopt dit gebouw?", "Controleer het adres van het gebouw dat je wilt verzekeren.")}
         <div class="step-content">${selectedBuildingCard()}</div>
         <form id="building-confirm-form" novalidate>${navActions()}</form>`;
     }
@@ -3507,7 +3561,7 @@
       return `
         ${stepHeader("Stap 2 - Gebouw", "Vul het gebouwadres handmatig in", "Deze route wordt gemarkeerd als handmatige bron. De gebouwkenmerken vul je in de volgende stap aan.")}
         <form id="manual-building-form" class="step-content" novalidate>
-          ${infoBlock("Geen BAG-bronwaarde", "De handmatige invoer blijft herkenbaar in de Hot Lead en kan de mock-confidence verlagen.", "warning")}
+
           <div class="split-fields" style="margin-top:18px;grid-template-columns:minmax(0,1.5fr) minmax(110px,.5fr);">
             <div class="field">
               <label class="field-label" for="manual-street">Straat <span class="required-mark" aria-hidden="true">*</span></label>
@@ -3563,7 +3617,7 @@
               <input class="input" id="building-search" name="buildingSearch" value="${escapeHtml(state.building.searchTerm)}" placeholder="Straat, huisnummer, postcode of plaats" autocomplete="street-address" spellcheck="false" ${state.ui.errors.buildingSearch ? "aria-invalid=\"true\"" : ""} ${describedBy("buildingSearch", ["building-search-help"])}>
               ${state.building.searchStatus === "loading" ? `<span class="search-loading spinner" aria-hidden="true"></span>` : ""}
             </div>
-            <p class="field-hint" id="building-search-help">Zoeken start vanaf ${CONFIG.minAddressSearchLength} tekens. Alleen fictieve demoresultaten worden getoond.</p>
+            <p class="field-hint" id="building-search-help">Zoeken start vanaf ${CONFIG.minAddressSearchLength} tekens.</p>
             ${errorHtml("buildingSearch")}
           </div>` : ""}
 
@@ -3587,13 +3641,13 @@
     state.building.objectChoices = [];
     state.building.searchStatus = "idle";
     state.building.results = [];
-    state.building.fields.buildYear = createValueObject(object.buildYear, "BAG-mock", object.sourceQuality || "matched", "valid");
+    state.building.fields.buildYear = createValueObject(object.buildYear, "BAG", object.sourceQuality || "matched", "valid");
     state.building.fields.buildYear.unit = "year";
-    state.building.fields.area = createValueObject(object.area, "BAG-mock", object.sourceQuality || "matched", "valid");
-    state.building.fields.area.unit = "m2-gebruiksoppervlak-demo";
-    state.building.fields.useFunction = createValueObject(object.useFunction, "BAG-mock", object.sourceQuality || "matched", "valid");
-    state.building.fields.rebuildValue = createValueObject(object.rebuildValueSuggestion, "mockHerbouwwaardeService", "estimated", "warning");
-    state.building.fields.rebuildValue.unit = "EUR-prijspeil-demo";
+    state.building.fields.area = createValueObject(object.area, "BAG", object.sourceQuality || "matched", "valid");
+    state.building.fields.area.unit = "m2-gebruiksoppervlak";
+    state.building.fields.useFunction = createValueObject(object.useFunction, "BAG", object.sourceQuality || "matched", "valid");
+    state.building.fields.rebuildValue = createValueObject(object.rebuildValueSuggestion, "Indicatieve herbouwwaarde", "estimated", "warning");
+    state.building.fields.rebuildValue.unit = "EUR-indicatief";
     state.building.rebuildKnown = "yes";
     if (previousObjectId !== object.objectId) resetPremiumResult("buildingChanged");
     Analytics.log("gbv_building_selected", {
@@ -3611,7 +3665,7 @@
     state.building.objectChoices = [];
     renderBuildingResultsOnly();
     try {
-      const enriched = await MockBagService.enrichAddress(addressRecord.address || addressRecord);
+      const enriched = await DemoBagService.enrichAddress(addressRecord.address || addressRecord);
       state.building.pendingAddress = enriched;
       state.building.objectChoices = enriched.objects;
       if (enriched.objects.length === 1) {
@@ -3640,7 +3694,7 @@
     renderBuildingResultsOnly();
     Analytics.log("gbv_building_search", { status: "started" });
     try {
-      const results = await MockBagService.search(term);
+      const results = await DemoBagService.search(term);
       if (token !== addressSearchToken) return;
       state.building.results = results;
       state.building.searchStatus = results.length ? "success" : "noResult";
@@ -3811,24 +3865,30 @@
     const destination = state.risk.destination;
     return `
       <div id="usage-office-info" ${destination === "office" ? "" : "hidden"}>
-        ${infoBlock("Kantoorroute", "Een kantoor kan in dit prototype een indicatieve premie krijgen als de verplichte gegevens compleet zijn en er geen blokkerende risicofactoren zijn.", "info")}
+
       </div>
       <div id="usage-vve-info" ${destination === "vve" ? "" : "hidden"}>
-        ${infoBlock("VvE met woonfunctie", "De VvE-route is alleen bedoeld voor een overwegende woonfunctie. De adviseur controleert later de rol, gemeenschappelijke delen en definitieve herbouwwaarde.", "info")}
+
       </div>
       <div id="usage-hospitality-info" ${destination === "hospitality" ? "" : "hidden"}>
-        ${infoBlock("Persoonlijk advies nodig", "Voor horeca tonen we in deze MVP geen premiebedrag. Je antwoorden worden wel gebruikt om het adviesgesprek voor te bereiden.", "warning")}
+
       </div>
       <div id="usage-mixed-panel" class="conditional-panel" ${destination === "mixed" ? "" : "hidden"}>
         <div class="field">
           <label class="field-label" for="mixed-description">Welke functies zijn in het gebouw aanwezig? <span class="required-mark" aria-hidden="true">*</span></label>
           <textarea class="textarea" id="mixed-description" name="mixedDescription" placeholder="Bijvoorbeeld: kantoor op de begane grond en woningen op de verdiepingen" ${state.ui.errors.mixedDescription ? "aria-invalid=\"true\"" : ""} ${describedBy("mixedDescription", ["mixed-help"])}>${escapeHtml(state.risk.mixedDescription)}</textarea>
-          <p class="field-hint" id="mixed-help">Deze tekst gaat alleen mee in de fictieve Hot Lead en wordt niet in analytics gelogd.</p>
+
           ${errorHtml("mixedDescription")}
         </div>
       </div>
-      <div id="usage-other-info" ${destination === "other" ? "" : "hidden"}>
-        ${infoBlock("Adviesroute", "Een andere bestemming valt buiten het mockmodel. Een adviseur kan samen met je bepalen wat mogelijk is.", "warning")}
+      <div id="usage-other-info" class="conditional-panel" ${destination === "other" ? "" : "hidden"}>
+        <div class="field">
+          <label class="field-label" for="other-description">Wat is het feitelijke gebruik? <span class="required-mark" aria-hidden="true">*</span></label>
+          <textarea class="textarea" id="other-description" name="otherDescription" placeholder="Beschrijf kort waarvoor het gebouw wordt gebruikt" ${state.ui.errors.otherDescription ? "aria-invalid=\"true\"" : ""} ${describedBy("otherDescription", ["other-help"])}>${escapeHtml(state.risk.otherDescription || "")}</textarea>
+          <p class="field-hint" id="other-help">Met deze toelichting kan een adviseur sneller beoordelen wat mogelijk is.</p>
+          ${errorHtml("otherDescription")}
+        </div>
+
       </div>`;
   }
 
@@ -3861,6 +3921,7 @@
     const mixed = document.getElementById("usage-mixed-panel");
     if (mixed) mixed.hidden = value !== "mixed";
     if (value === "mixed") document.getElementById("mixed-description")?.focus();
+    if (value === "other") document.getElementById("other-description")?.focus();
   }
 
   STEP_WIRERS.usage = function wireUsage() {
@@ -3882,12 +3943,15 @@
       const form = new FormData(event.currentTarget);
       const destination = String(form.get("destination") || "");
       const mixedDescription = String(form.get("mixedDescription") || "").trim();
+      const otherDescription = String(form.get("otherDescription") || "").trim();
       const errors = {};
       if (!destination) errors.destination = "Kies het feitelijke gebruik van het gebouw.";
       if (destination === "mixed" && mixedDescription.length < 5) errors.mixedDescription = "Beschrijf kort welke functies in het gebouw aanwezig zijn.";
+      if (destination === "other" && otherDescription.length < 5) errors.otherDescription = "Beschrijf kort waarvoor het gebouw wordt gebruikt.";
       if (Object.keys(errors).length) { setErrors(errors); return; }
       state.risk.destination = destination;
       state.risk.mixedDescription = destination === "mixed" ? mixedDescription : "";
+      state.risk.otherDescription = destination === "other" ? otherDescription : "";
       completeStep("usage");
       persistState();
       finishEditedStep("details");
@@ -3916,22 +3980,22 @@
     const rebuild = state.building.fields.rebuildValue.effectiveValue ?? "";
     const currentYear = new Date().getFullYear();
     return `
-      ${stepHeader("Stap 2 - Gebouw", "Controleer de gebouwgegevens", "We gebruiken beschikbare mockbronwaarden als voorstel. Pas een waarde aan als deze niet klopt; de oorspronkelijke bronwaarde blijft bewaard.")}
+      ${stepHeader("Stap 2 - Gebouw", "Controleer de gebouwgegevens", "We hebben enkele gegevens alvast ingevuld. Controleer deze en pas ze aan als dat nodig is.")}
       <form id="details-form" class="step-content" novalidate>
         <div class="split-fields">
           <div class="field">
             <label class="field-label" for="build-year">Bouwjaar <span class="required-mark" aria-hidden="true">*</span></label>
             <input class="input" id="build-year" name="buildYear" type="number" inputmode="numeric" min="1800" max="${currentYear}" value="${escapeHtml(buildYear)}" ${state.ui.errors.buildYear ? "aria-invalid=\"true\"" : ""} ${describedBy("buildYear", ["build-year-source"])}>
-            <p class="field-source" id="build-year-source">${sourceValueText(state.building.fields.buildYear)}</p>
+
             ${errorHtml("buildYear")}
           </div>
           <div class="field">
-            <label class="field-label" for="building-area">Oppervlakte <span class="required-mark" aria-hidden="true">*</span> ${tooltip("area-tooltip", "In dit prototype gebruiken we vierkante meters gebruiksoppervlak als demodefinitie. In een productiewaardige oplossing moet de tariefleidende definitie formeel worden vastgesteld.")}</label>
+            <label class="field-label" for="building-area">Oppervlakte <span class="optional">(indien bekend)</span> ${tooltip("area-tooltip", "We gebruiken de oppervlakte alleen als aanvullende gebouwinformatie wanneer die beschikbaar en relevant is. De oppervlakte blokkeert de premie-inschatting niet.")}</label>
             <div class="input-suffix-wrap">
               <input class="input" id="building-area" name="area" type="number" inputmode="numeric" min="10" max="100000" value="${escapeHtml(area)}" ${state.ui.errors.area ? "aria-invalid=\"true\"" : ""} ${describedBy("area", ["area-source"])}>
               <span class="input-suffix">m²</span>
             </div>
-            <p class="field-source" id="area-source">${sourceValueText(state.building.fields.area, value => `${formatNumber(value)} m²`)}</p>
+
             ${errorHtml("area")}
           </div>
         </div>
@@ -3952,13 +4016,42 @@
               <span class="input-prefix">€</span>
               <input class="input" id="rebuild-value" name="rebuildValue" inputmode="numeric" value="${escapeHtml(rebuild ? formatNumber(rebuild) : "")}" placeholder="Bijvoorbeeld 1.250.000" ${state.ui.errors.rebuildValue ? "aria-invalid=\"true\"" : ""} ${describedBy("rebuildValue", ["rebuild-source", "rebuild-explanation"])}>
             </div>
-            <p class="field-hint" id="rebuild-explanation">Dit is een schatting voor het prototype. Een adviseur stelt de definitieve waarde later vast.</p>
-            <p class="field-source" id="rebuild-source">${sourceValueText(state.building.fields.rebuildValue, value => formatMoney(value))}</p>
+            <p class="field-hint" id="rebuild-explanation">De herbouwwaarde is het bedrag dat nodig is om het gebouw op dezelfde plek opnieuw op te bouwen.</p>
+
             ${errorHtml("rebuildValue")}
           </div>
         </div>
         <div id="rebuild-unknown-info" ${state.building.rebuildKnown === "no" ? "" : "hidden"}>
-          ${infoBlock("Geen betrouwbare premie zonder herbouwwaarde", "Je kunt de funnel wel afronden. De uitkomst wordt dan 'onvoldoende gegevens' en een adviseur helpt de waarde bepalen.", "warning")}
+          <p class="field-hint">Weet je de herbouwwaarde niet? Je kunt gewoon verdergaan.</p>
+        </div>
+
+        <hr class="section-divider">
+        <div class="split-fields">
+          <div class="field">
+            <label class="field-label" for="construction-type">Bouwaard <span class="optional">(indien bekend)</span></label>
+            <select class="select" id="construction-type" name="constructionType">
+              <option value="">Kies indien bekend</option>
+              <option value="stoneConcrete" ${state.building.constructionType === "stoneConcrete" ? "selected" : ""}>Steen / beton</option>
+              <option value="steel" ${state.building.constructionType === "steel" ? "selected" : ""}>Staal / sandwichpanelen</option>
+              <option value="wood" ${state.building.constructionType === "wood" ? "selected" : ""}>Hout</option>
+              <option value="mixed" ${state.building.constructionType === "mixed" ? "selected" : ""}>Gemengd</option>
+              <option value="unknown" ${state.building.constructionType === "unknown" ? "selected" : ""}>Weet ik niet</option>
+            </select>
+
+          </div>
+          <div class="field">
+            <label class="field-label" for="roof-type">Soort dak <span class="optional">(indien bekend)</span></label>
+            <select class="select" id="roof-type" name="roofType">
+              <option value="">Kies indien bekend</option>
+              <option value="flat" ${state.building.roofType === "flat" ? "selected" : ""}>Plat dak</option>
+              <option value="tiles" ${state.building.roofType === "tiles" ? "selected" : ""}>Pannendak</option>
+              <option value="metal" ${state.building.roofType === "metal" ? "selected" : ""}>Metalen dak</option>
+              <option value="thatched" ${state.building.roofType === "thatched" ? "selected" : ""}>Riet / brandbaar dak</option>
+              <option value="other" ${state.building.roofType === "other" ? "selected" : ""}>Anders</option>
+              <option value="unknown" ${state.building.roofType === "unknown" ? "selected" : ""}>Weet ik niet</option>
+            </select>
+
+          </div>
         </div>
 
         <hr class="section-divider">
@@ -4026,10 +4119,12 @@
       const rebuildKnown = String(form.get("rebuildKnown") || "");
       const rebuildValue = parseNumber(form.get("rebuildValue"));
       const interest = String(form.get("interest") || "");
+      const constructionType = String(form.get("constructionType") || "");
+      const roofType = String(form.get("roofType") || "");
       const currentYear = new Date().getFullYear();
       const errors = {};
       if (!Number.isInteger(buildYear) || buildYear < 1800 || buildYear > currentYear) errors.buildYear = `Vul een plausibel bouwjaar in tussen 1800 en ${currentYear}.`;
-      if (!Number.isFinite(area) || area < 10 || area > 100000) errors.area = "Vul een oppervlakte in tussen 10 en 100.000 m².";
+      if (String(form.get("area") || "").trim() && (!Number.isFinite(area) || area < 10 || area > 100000)) errors.area = "Vul een oppervlakte in tussen 10 en 100.000 m², of laat het veld leeg.";
       if (!rebuildKnown) errors.rebuildKnown = "Geef aan of je de herbouwwaarde kunt bevestigen.";
       if (rebuildKnown === "yes" && (!Number.isFinite(rebuildValue) || rebuildValue < 50000 || rebuildValue > 100000000)) errors.rebuildValue = "Vul een herbouwwaarde in tussen € 50.000 en € 100.000.000.";
       if (!interest) errors.interest = "Kies je relatie tot het gebouw.";
@@ -4037,7 +4132,7 @@
 
       let criticalChanged = false;
       criticalChanged = applyNumericValueObject(state.building.fields.buildYear, buildYear, "buildYear") || criticalChanged;
-      criticalChanged = applyNumericValueObject(state.building.fields.area, area, "area") || criticalChanged;
+      if (Number.isFinite(area)) criticalChanged = applyNumericValueObject(state.building.fields.area, area, "area") || criticalChanged;
       state.building.rebuildKnown = rebuildKnown;
       if (rebuildKnown === "yes") {
         criticalChanged = applyNumericValueObject(state.building.fields.rebuildValue, rebuildValue, "rebuildValue") || criticalChanged;
@@ -4051,6 +4146,8 @@
       }
       if (state.building.interest !== interest) criticalChanged = true;
       state.building.interest = interest;
+      state.building.constructionType = constructionType || null;
+      state.building.roofType = roofType || null;
       if (!asbestosIsRelevant()) state.risk.asbestos = "notAsked";
       else if (state.risk.asbestos === "notAsked") state.risk.asbestos = null;
       if (criticalChanged) resetPremiumResult("buildingDetailsChanged");
@@ -4070,7 +4167,7 @@
     return `
       <div id="solar-details" class="conditional-panel" ${state.risk.solar === "yes" ? "" : "hidden"}>
         <h3 class="subheading">Aanvullende vragen over zonnepanelen</h3>
-        <p class="subheading-copy">Deze gegevens bepalen of de mockindicatie voldoende betrouwbaar is.</p>
+        <p class="subheading-copy">Deze gegevens kunnen invloed hebben op de risicobeoordeling en op de mogelijkheid om direct een premie-inschatting te tonen.</p>
         <fieldset class="field">
           <legend class="field-label">Hoeveel zonnepanelen zijn er? <span class="required-mark" aria-hidden="true">*</span></legend>
           ${radioCards("solarCount", [
@@ -4090,13 +4187,18 @@
           ], state.risk.solarLocation, "one")}
           ${errorHtml("solarLocation")}
         </fieldset>
+        <div id="solar-building-relation" ${state.risk.solarLocation === "ground" ? "hidden" : ""}>
+          <fieldset class="field">
+            <legend class="field-label">Zijn de zonnepanelen onderdeel van het te verzekeren gebouw? <span class="required-mark" aria-hidden="true">*</span></legend>
+            ${triStateCards("solarPartOfBuilding", state.risk.solarPartOfBuilding)}
+            ${errorHtml("solarPartOfBuilding")}
+          </fieldset>
+        </div>
+        <div id="solar-ground-info" ${state.risk.solarLocation === "ground" ? "" : "hidden"}>
+
+        </div>
         <fieldset class="field">
-          <legend class="field-label">Zijn de zonnepanelen onderdeel van het te verzekeren gebouw? <span class="required-mark" aria-hidden="true">*</span></legend>
-          ${triStateCards("solarPartOfBuilding", state.risk.solarPartOfBuilding)}
-          ${errorHtml("solarPartOfBuilding")}
-        </fieldset>
-        <fieldset class="field">
-          <legend class="field-label">Wat is de status van het Scope 10-rapport? <span class="required-mark" aria-hidden="true">*</span> ${tooltip("scope10-tooltip", "Scope 10 is een inspectiecontext voor elektrische installaties. In dit prototype verlaagt een ontbrekend, verlopen of onbekend rapport de confidence of leidt het tot handmatige beoordeling. Het is geen garantie op acceptatie of uitkering.")}</legend>
+          <legend class="field-label">Wat is de status van het Scope 10-rapport? <span class="required-mark" aria-hidden="true">*</span> ${tooltip("scope10-tooltip", "Scope 10 is een inspectie van de elektrische installatie en de brandrisico’s die daarmee samenhangen.")}</legend>
           ${radioCards("scope10", [
             { value: "valid", label: "Geldig rapport aanwezig" },
             { value: "expired", label: "Rapport is verlopen" },
@@ -4107,7 +4209,7 @@
         </fieldset>
       </div>
       <div id="solar-unknown-info" ${state.risk.solar === "unknown" ? "" : "hidden"}>
-        ${infoBlock("Open risicopunt", "Weet ik niet wordt niet als nee verwerkt. Dit kan de premie-inschatting blokkeren of de berekende schatting minder betrouwbaar maken.", "warning")}
+
       </div>`;
   }
 
@@ -4115,7 +4217,7 @@
     return `
       <div id="storage-details" class="conditional-panel" ${state.risk.storage === "yes" ? "" : "hidden"}>
         <h3 class="subheading">Aanvullende vragen over energieopslag</h3>
-        <p class="subheading-copy">Hogere of onbekende capaciteit kan tot persoonlijke beoordeling leiden.</p>
+
         <fieldset class="field">
           <legend class="field-label">Welk type energieopslag is aanwezig? <span class="required-mark" aria-hidden="true">*</span></legend>
           ${radioCards("storageType", [
@@ -4146,13 +4248,13 @@
         </div>
       </div>
       <div id="storage-unknown-info" ${state.risk.storage === "unknown" ? "" : "hidden"}>
-        ${infoBlock("Open risicopunt", "Een onbekende energieopslagsituatie vraagt in deze demoregelset om persoonlijke beoordeling.", "warning")}
+
       </div>`;
   }
 
   STEP_RENDERERS.riskInstallations = function renderRiskInstallations() {
     return `
-      ${stepHeader("Stap 3 - Risico", "Installaties in en rond het gebouw", "Beantwoord alleen wat je weet. Een onbekend antwoord blijft expliciet onbekend en wordt nooit als nee opgeslagen.")}
+      ${stepHeader("Stap 3 - Risico", "Installaties in en rond het gebouw", "Beantwoord de vragen over installaties die bij jouw gebouw van toepassing zijn.")}
       <form id="risk-installations-form" class="step-content" novalidate>
         <fieldset class="field">
           <legend class="field-label">Zijn er zonnepanelen? <span class="required-mark" aria-hidden="true">*</span></legend>
@@ -4192,6 +4294,16 @@
         if (event.target.value === "yes") document.querySelector("input[name=\"solarCount\"]")?.focus();
       });
     });
+    document.querySelectorAll("input[name=\"solarLocation\"]").forEach(input => {
+      input.addEventListener("change", event => {
+        state.risk.solarLocation = event.target.value;
+        if (event.target.value === "ground") state.risk.solarPartOfBuilding = "no";
+        const relation = document.getElementById("solar-building-relation");
+        const groundInfo = document.getElementById("solar-ground-info");
+        if (relation) relation.hidden = event.target.value === "ground";
+        if (groundInfo) groundInfo.hidden = event.target.value !== "ground";
+      });
+    });
     document.querySelectorAll("input[name=\"storage\"]").forEach(input => {
       input.addEventListener("change", event => {
         updateStatePath("risk.storage", event.target.value, { questionId: "storage", critical: true });
@@ -4218,7 +4330,7 @@
       if (solar === "yes") {
         if (!solarCount) errors.solarCount = "Kies een categorie voor het aantal zonnepanelen.";
         if (!solarLocation) errors.solarLocation = "Kies waar de zonnepanelen liggen.";
-        if (!solarPartOfBuilding) errors.solarPartOfBuilding = "Geef aan of de zonnepanelen onderdeel zijn van het gebouw.";
+        if (solarLocation !== "ground" && !solarPartOfBuilding) errors.solarPartOfBuilding = "Geef aan of de zonnepanelen onderdeel zijn van het gebouw.";
         if (!scope10) errors.scope10 = "Kies de status van het Scope 10-rapport.";
       }
       if (!storage) errors.storage = "Kies ja, nee of weet ik niet.";
@@ -4238,7 +4350,7 @@
       state.risk.solar = solar;
       state.risk.solarCount = solar === "yes" ? solarCount : null;
       state.risk.solarLocation = solar === "yes" ? solarLocation : null;
-      state.risk.solarPartOfBuilding = solar === "yes" ? solarPartOfBuilding : null;
+      state.risk.solarPartOfBuilding = solar === "yes" ? (solarLocation === "ground" ? "no" : solarPartOfBuilding) : null;
       state.risk.scope10 = solar === "yes" ? scope10 : null;
       state.risk.storage = storage;
       state.risk.storageType = storage === "yes" ? storageType : null;
@@ -4301,7 +4413,7 @@
   STEP_RENDERERS.riskOperations = function renderRiskOperations() {
     const askAsbestos = asbestosIsRelevant();
     return `
-      ${stepHeader("Stap 3 - Risico", "Gebruik en overige risicofactoren", "Deze vragen helpen bepalen of een premie-inschatting verantwoord is en welke open punten de adviseur moet bespreken.")}
+      ${stepHeader("Stap 3 - Risico", "Gebruik en overige risicofactoren", "Deze gegevens kunnen invloed hebben op de verzekeringsmogelijkheden en premie.")}
       <form id="risk-operations-form" class="step-content" novalidate>
         ${hospitalityIntakeHtml()}
         <fieldset class="field">
@@ -4316,6 +4428,7 @@
           ${errorHtml("vacancy")}
         </fieldset>
         <div id="vacancy-details" class="conditional-panel" ${["partial", "full", "planned"].includes(state.risk.vacancy) ? "" : "hidden"}>
+
           <div class="split-fields">
             <div class="field">
               <label class="field-label" for="vacancy-duration">Verwachte duur <span class="required-mark" aria-hidden="true">*</span></label>
@@ -4341,13 +4454,13 @@
           </div>
         </div>
 
-        <hr class="section-divider">
         ${askAsbestos ? `
+          <hr class="section-divider">
           <fieldset class="field">
             <legend class="field-label">Zijn er asbesthoudende materialen aanwezig? <span class="required-mark" aria-hidden="true">*</span></legend>
             ${triStateCards("asbestos", state.risk.asbestos)}
             ${errorHtml("asbestos")}
-          </fieldset>` : infoBlock("Asbestvraag niet getoond", "Op basis van het opgegeven bouwjaar is deze vraag in de demoregelset niet relevant gemaakt. De adviseur kan dit later alsnog controleren.", "info")}
+          </fieldset>` : ""}
 
         <hr class="section-divider">
         <fieldset class="field">
@@ -4478,20 +4591,22 @@
      21. STAP: DEKKINGSINTENTIE
      ======================================================================== */
   STEP_RENDERERS.coverage = function renderCoverage() {
+    const extendedUnavailable = state.risk.vacancy === "full" && ["3to12", "over12"].includes(state.risk.vacancyDuration);
+    if (extendedUnavailable && state.coverage.intent === "extended") state.coverage.intent = null;
     return `
-      ${stepHeader("Stap 3 - Risico", "Welke dekking wil je bespreken?", "Gebruik dit als intentie voor de premie-inschatting en het adviesgesprek. Dit is geen definitieve keuze en er ontstaat geen dekking.")}
+      ${stepHeader("Stap 3 - Risico", "Welke dekking past bij je?", "Kies de dekking die het beste aansluit bij wat je wilt verzekeren.")}
       <form id="coverage-form" class="step-content" novalidate>
         <fieldset class="field">
           <legend class="field-label">Dekkingsintentie <span class="required-mark" aria-hidden="true">*</span></legend>
           ${radioCards("coverage", [
             { value: "fire", label: "Brand", description: "Als gesprekspunt voor schade door brand" },
             { value: "fireStorm", label: "Brand en storm", description: "Brand plus storm als oriënterende variant" },
-            { value: "extended", label: "Uitgebreide gevaren", description: "Breder gesprek over aanvullende schadeoorzaken" },
+            ...(extendedUnavailable ? [] : [{ value: "extended", label: "Uitgebreide gevaren", description: "Breder gesprek over aanvullende schadeoorzaken" }]),
             { value: "unknown", label: "Ik weet het nog niet", description: "De adviseur helpt de passende variant bepalen" }
           ], state.coverage.intent, "one")}
+
           ${errorHtml("coverage")}
         </fieldset>
-        ${infoBlock("Geen definitieve dekkingskeuze", "Ruitschade of glas kan later als bespreekpunt worden meegenomen, maar wordt in dit prototype niet als losse verzekering aangevraagd.", "info")}
         ${navActions({ nextLabel: "Bekijk premie-inschatting" })}
       </form>`;
   };
@@ -4536,7 +4651,7 @@
         <div class="result-status-card" role="status" aria-live="polite">
           <div class="result-status-icon"><span class="spinner" aria-hidden="true"></span></div>
           <h3>We bepalen de juiste route</h3>
-          <p>De mockservice controleert productfit, verplichte factoren, risicoregels en confidence. Er wordt geen echte tariefservice aangeroepen.</p>
+          <p>We controleren of de ingevulde gegevens compleet genoeg zijn en of de situatie binnen de online rekenregels valt.</p>
         </div>`;
     }
 
@@ -4556,17 +4671,14 @@
               </div>
               <span class="premium-rounding">Afgerond op ${escapeHtml(formatMoney(premium.roundingUnit || CONFIG.premiumRoundingUnit))} per maand.</span>
             </div>
-            <p class="premium-disclaimer">Dit is een niet-bindende, afgeronde mockschatting op basis van de ingevulde variabelen. De definitieve premie kan afwijken na advies, aanvullende informatie en acceptatie. Er ontstaat geen recht op verzekering of dekking.</p>
+            <p class="premium-disclaimer">Dit is een vrijblijvende, afgeronde premie-inschatting op basis van de ingevulde gegevens. De definitieve premie kan afwijken na aanvullende informatie, beoordeling en acceptatie.</p>
             <div class="data-list" style="margin-top:18px;">
-              <div class="data-row"><div class="data-label">Assurantiebelasting</div><div class="data-value">Meegenomen als prototype-aanname</div></div>
-              <div class="data-row"><div class="data-label">Rekenwijze</div><div class="data-value">Deterministische mockberekening, daarna afgerond</div></div>
-              <div class="data-row"><div class="data-label">Geldig als orientatie tot</div><div class="data-value">${escapeHtml(formatDate(premium.validUntil))}</div></div>
-              <div class="data-row"><div class="data-label">Betrouwbaarheidsklasse</div><div class="data-value">${premium.confidenceClass === "high" ? "Hoog binnen het mockmodel" : "Middel binnen het mockmodel"}</div></div>
+
+
+
+
             </div>
-            <div class="assumptions">
-              <h3>Variabelen en aannames in deze schatting</h3>
-              <ul>${premium.assumptions.slice(0, 9).map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
-            </div>
+
           </div>
         </article>`;
     }
@@ -4576,7 +4688,7 @@
         <div class="result-status-card warning">
           <div class="result-status-icon" aria-hidden="true">i</div>
           <h3>Voor deze situatie is persoonlijk advies nodig</h3>
-          <p>We kunnen voor Horeca in deze MVP geen betrouwbare premie-inschatting tonen. Je antwoorden worden wel gebruikt om het gesprek met een adviseur goed voor te bereiden.</p>
+          <p>We kunnen voor deze situatie online geen premie-inschatting geven. Laat je gegevens achter, dan neemt een zakelijke adviseur contact met je op.</p>
         </div>`;
     }
 
@@ -4585,8 +4697,8 @@
         <div class="result-status-card warning">
           <div class="result-status-icon" aria-hidden="true">i</div>
           <h3>We kunnen nog geen betrouwbare indicatie geven</h3>
-          <p>Een of meer belangrijke gegevens ontbreken. Er wordt daarom geen bedrag of nulwaarde getoond.</p>
-          ${premium.missingFactorIds.length ? `<div class="assumptions"><h3>Nog nodig voor calculatie</h3><ul>${premium.missingFactorIds.map(id => `<li>${escapeHtml(missingFactorLabel(id))}</li>`).join("")}</ul></div>` : ""}
+          <p>Een of meer belangrijke gegevens ontbreken. Vul deze aan of laat je gegevens achter om de mogelijkheden te bespreken.</p>
+          ${premium.missingFactorIds.length ? `<div class="assumptions"><h3>Nog nodig</h3><ul>${premium.missingFactorIds.map(id => `<li>${escapeHtml(missingFactorLabel(id))}</li>`).join("")}</ul></div>` : ""}
         </div>`;
     }
 
@@ -4594,8 +4706,8 @@
       return `
         <div class="result-status-card warning">
           <div class="result-status-icon" aria-hidden="true">i</div>
-          <h3>Deze situatie vraagt om persoonlijke beoordeling</h3>
-          <p>De combinatie van gebruik, gebouwkenmerken of risicofactoren valt buiten het gevalideerde mockmodel. Een adviseur kan samen met je bepalen wat mogelijk is.</p>
+          <h3>We kunnen online nog geen premie geven</h3>
+          <p>Laat je gegevens achter. Een zakelijke adviseur neemt contact met je op om de mogelijkheden te bespreken.</p>
         </div>`;
     }
 
@@ -4639,12 +4751,12 @@
 
   STEP_RENDERERS.premium = function renderPremium() {
     const intro = state.premium.status === "calculated"
-      ? "De uitkomst is gebaseerd op fictieve brondata, klantantwoorden en een transparante mockberekening."
-      : "We tonen alleen een bedrag wanneer de situatie binnen het mockmodel valt en de gegevens voldoende compleet zijn.";
+      ? "De uitkomst is gebaseerd op beschikbare brongegevens en de antwoorden die je in deze flow hebt gegeven."
+      : "We tonen alleen een bedrag wanneer de situatie binnen de online rekenregels valt en de gegevens voldoende compleet zijn.";
     return `
       ${stepHeader("Stap 4 - Premie", "Je premie-inschatting", intro)}
       <div class="step-content">${premiumResultHtml()}</div>
-      ${infoBlock("Geen offerte of dekking", "De definitieve premie en verzekerbaarheid worden pas na persoonlijk advies en acceptatie bepaald. Deze funnel maakt geen aanvraag of polis aan.", "warning")}
+
       ${premiumActionsHtml()}`;
   };
 
@@ -4675,7 +4787,7 @@
     renderApp({ announce: false });
     premiumCalculationPromise = (async () => {
       try {
-        const response = await MockPremiumService.calculate();
+        const response = await DemoPremiumService.calculate();
         storePremiumResponse(response);
       } catch (error) {
         const history = state.premium.history || [];
@@ -4737,7 +4849,8 @@
      ======================================================================== */
   STEP_RENDERERS.contact = function renderContact() {
     return `
-      ${stepHeader("Stap 5 - Contact", "Hoe kan een adviseur contact met je opnemen?", "Je contactgegevens worden gebruikt voor persoonlijke opvolging van deze premie-inschatting. De regionale organisatie wordt bepaald op basis van het gebouwadres.")}
+      ${stepHeader("Stap 5 - Contact", "Hoe kunnen we contact met je opnemen?", "Laat je gegevens achter. Een zakelijke adviseur neemt contact met je op om de premie-inschatting en mogelijkheden te bespreken.")}
+
       <form id="contact-form" class="step-content" novalidate>
         <div class="split-fields">
           <div class="field">
@@ -4795,7 +4908,7 @@
           <p class="field-hint">Dit is een voorkeur en geen gegarandeerd tijdstip.</p>
         </div>
 
-        ${infoBlock("Privacy in dit prototype", "De gegevens worden alleen in deze browsertab bewaard en gebruikt om een fictieve Hot Lead te simuleren. In productie is een goedgekeurde privacyverklaring, grondslag en bewaartermijn nodig.", "info")}
+
 
         <div class="field">
           <div class="check-row">
@@ -4879,10 +4992,10 @@
       return `Ongeveer ${formatMoney(state.premium.estimatedAmount)} per maand`;
     }
     return ({
-      intakeOnly: "Geen premie - persoonlijk advies nodig",
-      insufficientData: "Geen premie - onvoldoende gegevens",
-      outsideModel: "Geen premie - persoonlijke beoordeling nodig",
-      technicalUnavailable: "Geen premie - berekening tijdelijk niet beschikbaar"
+      intakeOnly: "Persoonlijk advies nodig",
+      insufficientData: "Nog geen premie-inschatting",
+      outsideModel: "Persoonlijk advies nodig",
+      technicalUnavailable: "Premie-inschatting tijdelijk niet beschikbaar"
     })[state.premium.status] || "Nog niet bepaald";
   }
 
@@ -4908,32 +5021,29 @@
   function summaryContentHtml() {
     const company = state.company.selected;
     const building = state.building;
-    const buildYearNote = building.fields.buildYear.customerValue !== null
-      ? `Mockbronwaarde ${building.fields.buildYear.sourceValue}; klantwaarde is effectief.`
-      : `Bron: ${building.fields.buildYear.sourceSystem || "handmatig"}.`;
-    const areaNote = building.fields.area.customerValue !== null
-      ? `Mockbronwaarde ${formatNumber(building.fields.area.sourceValue)} m²; klantwaarde is effectief.`
-      : `Bron: ${building.fields.area.sourceSystem || "handmatig"}.`;
+    const buildYearNote = "";
+    const areaNote = "";
 
     return `
       ${summarySection("Bedrijf", "company", [
         summaryRow("Bedrijfsnaam", company?.tradeName || state.company.manual.name),
         summaryRow("Officiële naam", company?.officialName || state.company.manual.name),
-        summaryRow("KVK-nummer", company?.kvkNumber || "Niet beschikbaar - handmatige demovariant"),
+        summaryRow("KVK-nummer", company?.kvkNumber || "Niet beschikbaar - handmatig ingevoerd"),
         summaryRow("Vestiging", company?.branchNumber || "Niet beschikbaar"),
-        summaryRow("Bedrijfsbron", state.company.sourceStatus === "manual" ? "Handmatig ingevoerd" : "Mock-KVK")
       ])}
       ${summarySection("Te verzekeren gebouw", "building", [
         summaryRow("Adres", joinAddress(building.address)),
         summaryRow("Object", building.objectLabel || "Handmatig ingevoerd gebouw"),
-        summaryRow("BAG-match", building.sourceStatus === "matched" ? "Mockmatch gevonden" : building.sourceStatus === "manual" ? "Handmatige invoer" : "Controle nodig"),
         summaryRow("Bouwjaar", String(building.fields.buildYear.effectiveValue || "Onbekend"), buildYearNote),
         summaryRow("Oppervlakte", building.fields.area.effectiveValue ? `${formatNumber(building.fields.area.effectiveValue)} m²` : "Onbekend", areaNote),
         summaryRow("Herbouwwaarde", building.fields.rebuildValue.effectiveValue ? formatMoney(building.fields.rebuildValue.effectiveValue) : "Niet bekend"),
+        summaryRow("Bouwaard", ({ stoneConcrete: "Steen / beton", steel: "Staal / sandwichpanelen", wood: "Hout", mixed: "Gemengd", unknown: "Weet ik niet" })[building.constructionType] || "Niet ingevuld"),
+        summaryRow("Soort dak", ({ flat: "Plat dak", tiles: "Pannendak", metal: "Metalen dak", thatched: "Riet / brandbaar dak", other: "Anders", unknown: "Weet ik niet" })[building.roofType] || "Niet ingevuld"),
         summaryRow("Relatie tot gebouw", labelFrom("interest", building.interest))
       ])}
       ${summarySection("Gebruik van het gebouw", "usage", [
         summaryRow("Feitelijk gebruik", destinationLabel(state.risk.destination)),
+        ...(state.risk.destination === "other" && state.risk.otherDescription ? [summaryRow("Toelichting gebruik", state.risk.otherDescription)] : []),
         state.risk.destination === "mixed" ? summaryRow("Dominant gebruik", destinationLabel(state.risk.dominantUse)) : ""
       ].filter(Boolean))}
       ${state.risk.destination === "hospitality" ? summarySection("Horeca-intake", "riskOperations", [
@@ -4947,7 +5057,7 @@
       ])}
       ${summarySection("Overige risicofactoren", "riskOperations", [
         summaryRow("Leegstand", labelFrom("vacancy", state.risk.vacancy)),
-        summaryRow("Asbest", state.risk.asbestos === "notAsked" ? "Niet uitgevraagd in deze route" : labelFrom("asbestos", state.risk.asbestos)),
+        ...(state.risk.asbestos !== "notAsked" ? [summaryRow("Asbest", labelFrom("asbestos", state.risk.asbestos))] : []),
         summaryRow("Brandgevaarlijke werkzaamheden", hotWorkSummary())
       ])}
       ${summarySection("Dekkingsintentie", "coverage", [
@@ -4955,8 +5065,6 @@
       ])}
       ${summarySection("Premie-inschatting", "premium", [
         summaryRow("Uitkomst", premiumSummaryValue()),
-        summaryRow("Status", state.premium.status),
-        summaryRow("Indicatieve aard", "Geen offerte, acceptatie, polis of dekking")
       ])}
       ${summarySection("Contactgegevens", "contact", [
         summaryRow("Naam", `${state.contact.firstName} ${state.contact.lastName}`.trim()),
@@ -4977,10 +5085,10 @@
     const errorVisible = state.ui.leadErrorVisible;
     const submitLabel = errorVisible ? "Opnieuw proberen" : "Verstuur contactverzoek";
     return `
-      ${stepHeader("Stap 5 - Contact", "Controleer en verstuur je contactverzoek", "Controleer je gegevens. Na verzending wordt een fictieve, verrijkte Hot Lead duurzaam geregistreerd en gerouteerd op basis van de postcode van het gebouw.")}
+      ${stepHeader("Stap 5 - Contact", "Controleer je gegevens", "Controleer je antwoorden en contactgegevens voordat je ze verstuurt.")}
       <div class="step-content">${summaryContentHtml()}</div>
-      ${infoBlock("Dit is geen verzekeringsaanvraag", "De premie is indicatief, er wordt geen offerte uitgebracht, er ontstaat geen dekking en er wordt geen polis of aanvraag in QIS aangemaakt.", "warning")}
-      ${errorVisible ? infoBlock("Verzenden is nog niet gelukt", "Je gegevens zijn behouden. Probeer het opnieuw; dezelfde idempotency key wordt gebruikt en er ontstaat geen dubbele Hot Lead.", "error") : ""}
+
+      ${errorVisible ? infoBlock("Verzenden is nog niet gelukt", "Je gegevens zijn behouden. Probeer het opnieuw.", "error") : ""}
       <form id="summary-form" novalidate>
         <div class="step-actions">
           <button type="button" class="btn btn-quiet" data-action="back">← Vorige</button>
@@ -5018,7 +5126,7 @@
 
     try {
       const payload = buildLeadPayload();
-      const result = await MockLeadService.create(payload, state.ids.idempotencyKey);
+      const result = await DemoLeadService.create(payload, state.ids.idempotencyKey);
       state.ui.submitInProgress = false;
       state.ui.leadErrorVisible = false;
       state.lead.error = null;
@@ -5068,7 +5176,7 @@
   STEP_RENDERERS.confirmation = function renderConfirmation() {
     if (!state.lead.leadId) {
       return `
-        ${stepHeader("Bevestiging", "Het contactverzoek is nog niet bevestigd", "Er is geen duurzaam geregistreerde mock-Hot Lead gevonden.")}
+        ${stepHeader("Bevestiging", "Het contactverzoek is nog niet bevestigd", "We konden nog niet bevestigen dat je contactverzoek is ontvangen.")}
         ${infoBlock("Geen succesbevestiging", "Ga terug naar het overzicht en probeer het contactverzoek opnieuw te verzenden.", "error")}
         <div class="step-actions"><span></span><div class="action-group"><button type="button" class="btn btn-primary" data-action="return-summary">Terug naar overzicht</button></div></div>`;
     }
@@ -5077,9 +5185,9 @@
         <div class="success-mark" aria-hidden="true">✓</div>
         <p class="step-kicker">Contactverzoek ontvangen</p>
         <h2 class="step-title" id="step-title" tabindex="-1">Je contactverzoek is ontvangen</h2>
-        <p id="step-intro">Bedankt. We hebben je gegevens in deze demo duurzaam geregistreerd. Een zakelijke adviseur bekijkt je situatie en neemt naar verwachting binnen een werkdag contact met je op.</p>
+        <p id="step-intro">Bedankt. Je contactverzoek is ontvangen. Een zakelijke adviseur beoordeelt je ingevulde gegevens en neemt naar verwachting binnen een werkdag contact met je op. Een eventuele offerte of verzekeringsaanvraag volgt daarna als aparte stap.</p>
         <div class="reference-card">
-          <span class="reference-label">Klantveilige referentie</span>
+          <span class="reference-label">Referentienummer</span>
           <span class="reference-value">${escapeHtml(state.lead.customerReference)}</span>
         </div>
         <div class="data-card" style="margin-top:18px;text-align:left;">
@@ -5090,7 +5198,7 @@
             <div class="data-row"><dt class="data-label">3. Advies</dt><dd class="data-value">Definitieve premie, mogelijkheden en eventuele acceptatie worden persoonlijk besproken.</dd></div>
           </dl>
         </div>
-        ${infoBlock("Nog geen verzekering of dekking", "De getoonde premie was een indicatie. Er is geen verzekering aangevraagd of afgesloten en er is geen dekking ingegaan.", "warning")}
+
         <div class="confirmation-actions">
           <button type="button" class="btn btn-secondary" data-action="back-to-unive">Terug naar Univé Zakelijk</button>
           <button type="button" class="btn btn-primary" data-action="new-estimate">Nieuwe premie-inschatting</button>
@@ -5101,7 +5209,7 @@
   STEP_WIRERS.confirmation = function wireConfirmation() {
     document.querySelector("[data-action=\"return-summary\"]")?.addEventListener("click", () => goToStep("summary"));
     document.querySelector("[data-action=\"back-to-unive\"]")?.addEventListener("click", () => {
-      showToast("Dit is een prototype. In productie gaat deze knop terug naar Univé Zakelijk.");
+      showToast("Deze link is in deze test niet actief.");
     });
     document.querySelector("[data-action=\"new-estimate\"]")?.addEventListener("click", startNewApplication);
   };
@@ -5125,15 +5233,15 @@
   ];
 
   function seedCompany(companyId) {
-    const company = deepClone(MOCK_COMPANIES.find(item => item.id === companyId) || MOCK_COMPANIES[0]);
+    const company = deepClone(DEMO_COMPANIES.find(item => item.id === companyId) || DEMO_COMPANIES[0]);
     state.company.selected = company;
-    state.company.sourceStatus = "mockKvk";
+    state.company.sourceStatus = "demoKvk";
     state.company.retrievedAt = nowIso();
     state.completedSteps.push("company");
   }
 
   function seedBuilding(addressId, objectIndex = 0) {
-    const record = deepClone(MOCK_BUILDINGS.find(item => item.addressId === addressId) || MOCK_BUILDINGS[0]);
+    const record = deepClone(DEMO_BUILDINGS.find(item => item.addressId === addressId) || DEMO_BUILDINGS[0]);
     const object = record.objects[objectIndex] || record.objects[0];
     state.building.sameAsBranch = "yes";
     state.building.selectedAddressId = record.addressId;
@@ -5142,13 +5250,13 @@
     state.building.objectLabel = object.label;
     state.building.sourceStatus = object.sourceQuality || "matched";
     state.building.retrievedAt = nowIso();
-    state.building.fields.buildYear = createValueObject(object.buildYear, "BAG-mock", object.sourceQuality || "matched", "valid");
+    state.building.fields.buildYear = createValueObject(object.buildYear, "BAG", object.sourceQuality || "matched", "valid");
     state.building.fields.buildYear.unit = "year";
-    state.building.fields.area = createValueObject(object.area, "BAG-mock", object.sourceQuality || "matched", "valid");
-    state.building.fields.area.unit = "m2-gebruiksoppervlak-demo";
-    state.building.fields.useFunction = createValueObject(object.useFunction, "BAG-mock", object.sourceQuality || "matched", "valid");
-    state.building.fields.rebuildValue = createValueObject(object.rebuildValueSuggestion, "mockHerbouwwaardeService", "estimated", "warning");
-    state.building.fields.rebuildValue.unit = "EUR-prijspeil-demo";
+    state.building.fields.area = createValueObject(object.area, "BAG", object.sourceQuality || "matched", "valid");
+    state.building.fields.area.unit = "m2-gebruiksoppervlak";
+    state.building.fields.useFunction = createValueObject(object.useFunction, "BAG", object.sourceQuality || "matched", "valid");
+    state.building.fields.rebuildValue = createValueObject(object.rebuildValueSuggestion, "Indicatieve herbouwwaarde", "estimated", "warning");
+    state.building.fields.rebuildValue.unit = "EUR-indicatief";
     state.building.rebuildKnown = "yes";
     state.completedSteps.push("building");
   }
@@ -5396,14 +5504,14 @@
 
   document.getElementById("save-progress")?.addEventListener("click", () => {
     persistState();
-    showToast("Je demo-invoer is alleen voor deze browsertab bewaard.");
-    announce("Je demo-invoer is in deze browsertab bewaard.");
+    showToast("Je invoer is tijdelijk bewaard.");
+    announce("Je invoer is tijdelijk bewaard.");
   });
 
   document.querySelectorAll("[data-prototype-link]").forEach(link => {
     link.addEventListener("click", event => {
       event.preventDefault();
-      showToast("Deze link is niet actief in het zelfstandige prototype.");
+      showToast("Deze link is in deze test niet actief.");
     });
   });
 
