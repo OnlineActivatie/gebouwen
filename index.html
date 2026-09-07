@@ -1,0 +1,685 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Premie-inschatting gebouwenverzekering | Univé Zakelijk — Prototype v2</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
+@font-face{font-family:'Bree';src:url('bree-semibold.otf') format('opentype');font-weight:400 700;font-style:normal;font-display:swap}
+
+:root{
+  /* Univé digitale merkaccenten */
+  --unive-green:#007943;
+  --unive-green-dark:#005b35;
+  --unive-green-ink:#00452b;
+  --unive-green-soft:#edf8f1;
+  --unive-purple:#6753F6;
+  --unive-purple-dark:#4c37d9;
+  --unive-purple-soft:#f1effe;
+  --unive-red:#FF5A5F;
+  --unive-red-dark:#a92f3a;
+  --unive-red-soft:#fff0f1;
+  --ink:#242424;
+  --muted:#5f6368;
+  --line:#dedede;
+  --line-strong:#bdbdbd;
+  --page:#f5f5f5;
+  --white:#fff;
+  --warning:#705400;
+  --warning-soft:#fff8dc;
+  --radius-sm:8px;
+  --radius-md:12px;
+  --radius-lg:18px;
+  --shadow:0 1px 2px rgba(0,0,0,.04);
+  --content:1152px;
+  --font-body:'Open Sans',Arial,Helvetica,sans-serif;
+  --font-heading:'Bree','Bree Serif',Georgia,serif;
+  --font-heading-weight:600;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--page);color:var(--ink);font:16px/1.55 var(--font-body);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh;display:flex;flex-direction:column}
+main.layout{flex:1}
+button,input,select{font:inherit}
+button{cursor:pointer}
+[hidden]{display:none!important}
+a{color:var(--unive-purple);text-decoration-thickness:1px;text-underline-offset:2px}
+:focus-visible{outline:3px solid rgba(148,155,255,.52);outline-offset:3px}
+.shell{width:min(calc(100% - 40px),var(--content));margin-inline:auto}
+
+/* Header — vormgeving naar het menu van unive.nl/zakelijk */
+.utility{background:#f4f4f4;font-size:14px;color:#242424}
+.utility .shell{min-height:44px;display:flex;align-items:center;justify-content:center;gap:38px;position:relative}
+.utility-benefits{display:flex;align-items:center;gap:38px;white-space:nowrap;min-width:0;overflow:hidden}
+.utility-benefits span{display:inline-flex;align-items:center;gap:10px;min-width:0}
+.utility-benefits span > i{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-style:normal}
+.ico{width:24px;height:24px;flex:0 0 auto;display:inline-block;background:no-repeat center/contain}
+.ico[data-icon="schade-melden"]{background-image:url('icons/Damage-Speech.svg')}
+.ico[data-icon="klantenservice"]{background-image:url('icons/Service.svg')}
+.ico[data-icon="winkels"]{background-image:url('icons/Store.svg')}
+.utility-benefits .ico[data-icon="winkels"]{background-image:url('icons/Store-green.svg')}
+.ico[data-icon="leden"]{background-image:url('icons/People.svg')}
+.ico[data-icon="geen-winstoogmerk"]{background-image:url('icons/Pricetag.svg')}
+.ico[data-icon="mijn-unive"]{background-image:url('icons/Person.svg')}
+.ico-slot{border:1px dashed #c9c1fb;border-radius:4px;width:22px;height:22px}
+.header{background:#fff}
+.header .shell{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:44px;row-gap:16px;align-items:center;padding:20px 0 22px}
+.logo{display:flex;align-items:center;flex:0 0 auto;text-decoration:none;min-width:91px}
+.logo img{display:block;width:158px;height:auto;max-height:56px}
+.logo-fallback{display:none;font-family:var(--font-heading);font-size:40px;color:var(--unive-green-dark)}
+.utility-links{display:flex;align-items:center;justify-content:flex-end;gap:30px;white-space:nowrap;font-size:15px}
+.utility-links > *{display:inline-flex;align-items:center;gap:9px;color:#242424;text-decoration:none;font-weight:600;background:none;border:0;padding:0}
+.segment-nav{display:inline-flex;align-items:center;border:1px solid #d4d4d4;border-radius:6px;overflow:hidden;justify-self:start}
+.segment-nav span{padding:7px 14px;text-decoration:none;color:#6a6a6a;font-weight:600;font-size:14px}
+.segment-nav span+span{border-left:1px solid #d4d4d4}
+.segment-nav span.active{color:#161616;font-weight:700}
+.nav-row{display:flex;align-items:center;justify-content:space-between;gap:32px;min-width:0}
+.nav{display:flex;gap:34px;align-items:center;font-weight:700;font-size:17px;flex-wrap:nowrap;white-space:nowrap;min-width:0;flex:0 1 auto}
+.nav a,.nav .nav-item{display:inline-flex;align-items:center;gap:9px;color:#161616;text-decoration:none;padding:4px 0;border:0;background:none;border-bottom:2px solid transparent;font:inherit}
+.nav a:hover,.nav .nav-item:hover{border-color:transparent}
+.chev{width:8px;height:8px;flex:0 0 auto;border-right:2px solid #161616;border-bottom:2px solid #161616;transform:rotate(45deg) translate(-2px,-2px)}
+.nav .chev{width:11px;height:11px;border:0;transform:none;background:url('icons/Caret-Down.svg') no-repeat center/contain}
+.utility-links .chev{width:11px;height:11px;border:0;transform:none;background:url('icons/Caret-Down.svg') no-repeat center/contain}
+.header-search{display:flex;align-items:center;gap:10px;flex:0 1 320px;min-width:0;border:1px solid #b6b6b6;border-radius:8px;padding:0 6px 0 18px;height:52px;color:#5f6368}
+.search-icon{color:#9a9a9a;flex:0 0 auto}
+.input-icon-wrap{position:relative}
+.input-icon-wrap .search-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);pointer-events:none}
+.input-icon-wrap .input{padding-left:44px}
+.header-search input{border:0;outline:0;background:none;flex:1;min-width:0;font-size:15px;color:#242424}
+.search-btn{flex:0 0 auto;width:38px;height:38px;border:0;background:url('icons/search.svg') no-repeat center/contain;display:block}
+.burger{display:none;flex:0 0 auto;width:44px;height:44px;border:0;background:none;padding:10px;margin-left:auto}
+.burger span{display:block;height:2px;background:var(--unive-green-ink);border-radius:2px}
+.burger span+span{margin-top:5px}
+.badge{position:absolute;right:0;top:50%;transform:translateY(-50%);display:inline-flex;align-items:center;gap:7px;border:0;background:#e6e6e6;color:#494949;padding:6px 11px;border-radius:999px;font-size:12px;font-weight:700}
+.badge:before{content:'';width:7px;height:7px;border-radius:50%;background:var(--unive-red)}
+
+/* Hero */
+.hero{background:#fff;padding:24px 0 28px}
+.crumbs{font-size:13px;color:#656565;margin-bottom:16px}
+.hero h1{margin:0 auto;max-width:900px;text-align:center;color:var(--unive-green-ink);font:400 40px/1.08 var(--font-heading);letter-spacing:-.015em}
+.hero p{margin:10px 0 0;color:#515151;max-width:790px;font-size:16px;line-height:1.55}
+
+/* Progress */
+.progress-wrap{background:#fff}
+.progress{display:grid;grid-template-columns:repeat(5,1fr);gap:0;padding:26px 0 24px;width:min(100%,768px);margin-inline:auto}
+.progress-item{position:relative;text-align:center;font-size:14px;color:#161616;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:14px}
+.progress-item i{width:40px;height:40px;flex:0 0 auto;border-radius:50%;background:#f0f0f0;color:#161616;display:grid;place-items:center;font:700 17px/1 var(--font-body);font-style:normal;position:relative;z-index:2}
+.progress-item span{display:block;max-width:170px;text-wrap:pretty}
+.progress-item:not(:last-child):after{content:'';position:absolute;top:19px;left:calc(50% + 28px);width:calc(100% - 56px);height:2px;background:#e6e6e6;z-index:1}
+.progress-item.active i{background:#388042;color:#fff}
+.progress-item.active span{color:#388042}
+.progress-item.done i{background:#388042;color:transparent;background-image:url('icons/Check.svg');background-repeat:no-repeat;background-position:center;background-size:15px 15px}
+
+/* Layout + cards */
+.layout{display:grid;grid-template-columns:minmax(0,760px) 368px;gap:24px;padding:32px 0 56px}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow)}
+.main-card{padding:34px 36px 36px;border:0;box-shadow:0 2px 24px rgba(0,0,0,.08)}
+.side{display:grid;gap:16px;align-content:start}
+.side-card{padding:20px 20px 21px}
+.side-card--flat{border:0;box-shadow:0 2px 24px rgba(0,0,0,.08)}
+.help-card{text-align:center}
+.help-card h3{margin-bottom:2px}
+.help-card p{margin:0 0 18px;color:#0A0A0A;font:400 20px/1.25 var(--font-heading)}
+.help-phone{display:flex;align-items:center;justify-content:center;gap:12px;min-height:56px;border:1px solid #737373;border-radius:8px;color:var(--unive-purple);text-decoration:none;transition:border-color .15s,background .15s}
+.help-phone:hover{border-color:var(--unive-purple);background:#faf9ff}
+.help-phone strong{color:#0A0A0A;font-size:17px}
+.help-hours{display:block;margin-top:12px;font-size:14px;color:#737373}
+.usp-list{list-style:none;margin:16px 4px;padding:0;display:grid;gap:14px}
+.usp-list li{display:flex;align-items:center;gap:12px}
+.usp-list img{width:24px;height:24px;flex-shrink:0}
+.usp-list span{font-size:15px;color:#292929}
+.side-card h3{margin:0 0 8px;color:var(--unive-green-ink);font:400 20px/1.25 var(--font-heading)}
+.side-card p,.side-card li{font-size:14px;color:#565656;line-height:1.5}
+.side-card ul{margin:10px 0 0;padding-left:19px}
+.side-card li+li{margin-top:5px}
+.demo-card{border-color:#cdc5fb;background:#fbfaff}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.065em;text-transform:uppercase;color:var(--unive-green-dark);margin-bottom:8px}
+h2{font:400 32px/1.17 var(--font-heading);letter-spacing:-.01em;margin:0 0 8px;color:#0A0A0A}
+.header-divider{border:0;border-top:1px solid #e6e6e6;margin:20px 0 24px}
+.header-sub{font:400 20px/1.25 var(--font-heading);color:#0A0A0A;margin:0 0 12px}
+.lead{margin:0 0 27px;color:#0A0A0A;max-width:760px}
+.lead-sm{font-size:14px}
+.label-sm{font-size:14px}
+.section-title{font:400 22px/1.25 var(--font-heading);margin:30px 0 5px;color:#2e2e2e}
+.section-help{font-size:14px;color:#666;margin:0 0 15px}
+
+/* Form controls */
+.field{margin:22px 0}
+.split.split-stack .field{width:50%;margin:0}
+@media (max-width:640px){.split.split-stack .field{width:100%}}
+.label,legend{display:block;min-height:20px;font-family:var(--font-body);font-weight:600;line-height:1.25;margin-bottom:9px;color:#0A0A0A}
+.optional{font-weight:400;color:#737373;font-size:15px;margin-left:8px}
+.hint{font-size:13px;color:#666;margin:7px 0 0;line-height:1.45}
+.info-wrap{position:relative;display:inline-block;vertical-align:middle}
+.info-btn{width:22px;height:22px;margin-left:8px;border:0;border-radius:50%;background:#9a9a9a;color:#fff;font:700 13px/1 Georgia,serif;display:inline-grid;place-items:center;cursor:pointer;padding:0;vertical-align:middle}
+.info-btn:hover{background:#737373;color:#fff}
+.info-pop{display:none}
+.modal{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.28);display:grid;place-items:center;padding:24px}
+.modal-panel{position:relative;width:min(100%,720px);background:#fff;border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.18);padding:32px 40px 36px}
+.modal-panel h3{font:600 22px/1.3 var(--font-body);margin:0 0 22px;color:#0A0A0A;padding-right:64px}
+.modal-panel p{margin:0;font-size:16px;line-height:1.5;color:#0A0A0A}
+.text-link{display:inline-block;margin-top:10px;color:var(--unive-purple);font-weight:700;text-decoration:underline;text-underline-offset:3px;background:none;border:0;padding:0;font-size:16px;font-family:var(--font-body);cursor:pointer}
+.calc-result{margin-top:24px;padding-top:20px;border-top:1px solid #e9e9e9}
+.calc-result span{display:block;font-size:15px;color:#737373;margin-bottom:4px}
+.calc-result strong{font:400 32px/1.1 var(--font-heading);color:var(--unive-green-ink)}
+.calc-disclaimer{margin:8px 0 0;font-size:13px;color:#8a8a8a;line-height:1.4}
+.modal-close{position:absolute;top:24px;right:26px;width:44px;height:44px;border:0;border-radius:50%;background:#f2f2f2;color:#d0021b;font:700 17px/1 var(--font-body);display:grid;place-items:center;cursor:pointer}
+.modal-close:hover{background:#e8e8e8}
+.field.has-error .input,.field.has-error .select,.field.has-error .choice{border-color:#d0021b}
+.field-error{display:flex;gap:8px;align-items:flex-start;color:#d0021b;font-size:14px;margin-top:8px;line-height:1.4}
+.field-error svg{flex-shrink:0;margin-top:2px}
+.input,.select{width:100%;min-height:56px;height:56px;border:1px solid #737373;border-radius:8px;background:#fff;padding:11px 13px;color:#222;transition:border-color .16s,box-shadow .16s,background .16s}
+.input:hover,.select:hover{border-color:#646464}
+.input:focus,.select:focus{border-color:#0A0A0A;box-shadow:none;outline:2px dotted var(--unive-purple);outline-offset:4px}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:16px 24px;align-items:end}
+.split.split-stack{grid-template-columns:1fr;gap:22px}
+.split .label{font-size:16px}
+.radios,.checks{display:grid;gap:10px}
+.radios.cols2,.checks.cols2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.radios.yesno{width:50%;grid-template-columns:1fr 1fr;gap:0}
+.radios.yesno .choice{border-radius:0}
+.checks-list{width:50%;gap:0}
+.checks-list .choice,.radios-list .choice{border-radius:0;border-bottom:0}
+.checks-list .choice:first-child,.radios-list .choice:first-child{border-radius:8px 8px 0 0}
+.checks-list .choice:last-child,.radios-list .choice:last-child{border-radius:0 0 8px 8px;border-bottom:1px solid #c9c9c9}
+.radios-list{width:50%;gap:0}
+.sub-progress{height:6px;background:#e6e6e6;border-radius:99px;margin-bottom:24px;overflow:hidden}
+.sub-progress-fill{height:100%;background:#388042;border-radius:99px;transition:width .2s}
+@media (max-width:640px){.checks-list,.radios-list{width:100%}}
+.radios.yesno .choice:first-child{border-radius:8px 0 0 8px}
+.radios.yesno .choice:last-child{border-radius:0 8px 8px 0;border-left:0}
+.radios.yesno .choice:has(input:checked){border-left:1px solid var(--unive-purple);z-index:1}
+.choice{display:flex;gap:12px;align-items:center;min-height:56px;border:1px solid #737373;border-radius:8px;padding:12px 15px;background:#fff;cursor:pointer;transition:border-color .15s,background .15s,box-shadow .15s}
+.choice:hover{border-color:#a79bf9;background:#faf9ff}
+.choice:has(input:checked){border-color:var(--unive-purple);background:var(--unive-purple-soft);box-shadow:0 0 0 1px var(--unive-purple)}
+.choice input{margin-top:0;accent-color:var(--unive-purple);width:18px;height:18px}
+.choice strong{display:block;font-weight:400;font-size:16px;color:#2c2c2c}
+.choice small{display:block;color:#646464;margin-top:2px;line-height:1.4}
+
+/* Status */
+.info{border:0;border-left:4px solid var(--unive-green);background:var(--unive-green-soft);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:14px 16px;margin:19px 0;color:#274c3b;font-size:14px}
+.warning{border-left-color:#e0b800;background:var(--warning-soft);color:#5d4b00}
+.error{display:none;border:0;border-left:4px solid var(--unive-red);background:var(--unive-red-soft);color:#872832;padding:11px 13px;border-radius:0 var(--radius-sm) var(--radius-sm) 0;margin-top:9px;font-size:14px}
+.error.show{display:block}
+
+/* Buttons */
+.actions{display:flex;flex-direction:column;align-items:stretch;gap:22px;margin-top:32px;padding-top:24px;border-top:1px solid #e9e9e9}
+.actions.actions-left{justify-content:flex-start}
+.btn-back{align-self:flex-start;display:inline-flex;align-items:center;gap:16px;background:none;border:0;padding:0;font:700 16px/1 var(--font-body);color:#0A0A0A;cursor:pointer}
+.btn-back .btn-ico{width:24px;height:24px;flex:0 0 auto;background:url('icons/Back-Arrow.svg') no-repeat center/contain;transition:transform .15s}
+.btn-back:hover .btn-ico{transform:translateX(4px)}
+.btn{min-height:56px;border-radius:8px;padding:0 22px;border:1px solid transparent;font-weight:700;transition:background .15s,border-color .15s,transform .08s}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:var(--unive-purple);color:#fff;border-color:var(--unive-purple);display:inline-flex;align-items:center;justify-content:space-between;gap:24px;min-width:260px;padding:0 14px 0 22px}
+.btn-primary:hover{background:var(--unive-purple);border-color:var(--unive-purple)}
+.btn-secondary{background:#fff;color:#343434;border-color:#8e8e8e}
+.btn-secondary:hover{background:#f4f4f4;border-color:#666}
+.btn-primary .btn-ico{width:24px;height:24px;flex:0 0 auto;background:url('icons/Button-Arrow.svg') no-repeat center/contain;transition:transform .15s}
+.btn-primary:hover .btn-ico{transform:translateX(-4px)}
+.actions .btn-primary{width:50%}
+
+/* Search / confirm */
+.search-results{display:grid;gap:10px;margin-top:11px}
+.search-result{width:100%;text-align:left;background:#fff;border:1px solid #737373;border-radius:var(--radius-md);padding:15px 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;transition:border-color .15s,background .15s}
+.search-result:hover{border-color:var(--unive-purple);background:var(--unive-purple-soft)}
+.search-result strong{display:block;color:#292929}
+.search-result span{display:block;color:#0A0A0A;font-size:13px;margin-top:2px}
+.search-result .result-text{min-width:0}
+.search-result .result-arrow{flex:0 0 auto;width:24px;height:24px}
+.skeleton-result{height:90px;border-radius:var(--radius-md);background:linear-gradient(90deg,#e9e9e9 25%,#f5f5f5 50%,#e9e9e9 75%);background-size:400% 100%;animation:skeleton-loading 1.2s ease-in-out infinite}
+@keyframes skeleton-loading{0%{background-position:100% 0}100%{background-position:0 0}}
+.confirm-box{border:0;background:var(--unive-green-soft);border-radius:var(--radius-md);padding:18px 19px;margin:16px 0}
+.confirm-value{font:400 22px/1.25 var(--font-heading);color:var(--unive-green-ink);margin:4px 0}
+.pill{display:inline-block;border-radius:999px;padding:5px 10px;background:#ececec;color:#555;font-size:12px;font-weight:700}
+
+/* Premiecards */
+.premium-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:22px}
+.premium-col{display:flex;flex-direction:column;min-width:0}
+.premium-card{border:1px solid #d3d3d3;border-radius:var(--radius-lg);padding:0;overflow:hidden;background:#fff;position:relative;display:flex;flex-direction:column;flex:1;min-height:315px;cursor:pointer;transition:box-shadow .15s,border-color .15s}
+.premium-card.selected{border-color:var(--unive-purple);border-width:2px}
+.premium-card.featured{border-color:#d3d3d3;padding:0;border-top-left-radius:0;border-top-right-radius:0}
+.premium-card.featured.selected{border-color:var(--unive-purple)}
+.premium-ribbon{background:var(--unive-green-dark);color:#fff;text-align:center;font-weight:700;font-size:14px;padding:12px 0;border-radius:var(--radius-lg) var(--radius-lg) 0 0}
+.premium-head{background:#f5f5f5;padding:22px 20px 18px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px;border-bottom:1px solid #ebebeb}
+.card-select-dot{position:static;width:24px;height:24px;border-radius:50%;border:1px solid #8e8e8e;background:#fff}
+.premium-card.selected .card-select-dot{border-color:var(--unive-purple);background:var(--unive-purple) url('icons/Check.svg') no-repeat center/13px 13px}
+.premium-body{padding:20px;display:flex;flex-direction:column;gap:16px;flex:1}
+.premium-divider{height:1px;background:#ececec;margin:0}
+.er-row{margin-top:auto}
+.premium-card.featured:before{display:none}px}
+.premium-card h3{margin:0;color:var(--unive-green-ink);font:400 22px/1.25 var(--font-heading);text-align:center}
+.price{font:400 34px/1.1 var(--font-heading);letter-spacing:-.015em;color:#222;margin:0;text-align:center}
+.price small{font:600 13px/1 var(--font-body);letter-spacing:0;color:#666}
+.premium-card p{font-size:13px;color:#5e5e5e;line-height:1.45;margin:0;text-align:center}
+.premium-card .select{min-height:44px;height:auto;margin-top:auto}
+.recalc{font-size:12px;color:var(--unive-green-dark);min-height:18px;margin-top:6px;font-weight:600}
+
+/* Summary */
+.summary{display:grid;gap:13px}
+.summary-block{border:1px solid #d3d3d3;border-radius:var(--radius-md);padding:0;overflow:hidden}
+.summary-block h3{font:600 16px/1.3 var(--font-body);margin:0;padding:14px 18px;background:#f5f5f5;border-bottom:1px solid #ebebeb;color:#0A0A0A}
+.summary-body{padding:16px 18px}
+.summary-row{display:flex;justify-content:space-between;gap:20px;padding:5px 0;font-size:14px}
+.summary-row span:first-child{color:#0A0A0A;font-weight:700}
+.summary-row strong{font-weight:400;color:#292929;text-align:right}
+.success{padding:36px;text-align:center}
+.success-mark{width:60px;height:60px;border-radius:50%;background:var(--unive-green);color:#fff;display:grid;place-items:center;margin:0 auto 17px;font-size:29px;font-weight:700}
+.loading{display:inline-block;width:16px;height:16px;border:2px solid #ddd;border-top-color:var(--unive-purple);border-radius:50%;animation:spin .8s linear infinite;vertical-align:-3px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Footer */
+.footer{background:#fff;padding:28px 0;color:#606060;font-size:13px;margin-top:auto}
+.footer .shell{display:flex;align-items:center;justify-content:space-between;gap:24px}
+.footer-brand{display:flex;align-items:center;gap:18px}
+.footer-logo{width:180px;height:auto;display:block}.footer-logo-fallback{display:none;font-family:var(--font-heading);color:var(--unive-green-ink);font-size:18px}.footer-logo-fallback small{display:block;font-family:var(--font-body);font-size:11px;color:var(--unive-red-dark);margin-top:2px}
+.footer-note{max-width:680px;text-align:right}
+.footer-proto{display:flex;align-items:center;gap:10px}
+.footer-proto-select{font-size:12px;color:#8a8a8a;border:1px solid #e2e2e2;border-radius:999px;padding:5px 10px;background:#fff;cursor:pointer}
+.footer-proto-reset{font-size:12px;color:#8a8a8a;background:none;border:none;text-decoration:underline;cursor:pointer;padding:0}
+.footer-proto-reset:hover{color:#565656}
+.mobile-only{display:none}
+
+@media(max-width:980px){
+ .utility-benefits span:nth-child(n+2){display:none}
+ .nav{gap:16px;font-size:14px}
+ .header-search{flex:0 1 160px}
+ .header .shell{column-gap:24px}
+ .nav-row{gap:20px}
+ .layout{grid-template-columns:minmax(0,1fr) 320px}
+ .premium-grid{grid-template-columns:1fr}
+ .premium-card{min-height:auto}
+ .premium-card p{min-height:auto}
+}
+@media(max-width:860px){
+ .utility-benefits{display:none}
+ .utility-links > span:nth-child(-n+2){display:none}
+ .header .shell{column-gap:24px}
+ .layout{grid-template-columns:1fr}
+ .side{grid-row:2}
+ .main-card{padding:28px}
+}
+@media(max-width:640px){
+ .shell{width:min(calc(100% - 24px),var(--content))}
+ .utility .shell{min-height:36px}
+ .header .shell{min-height:68px;gap:14px}
+ .logo img{width:120px}
+ .header .shell{grid-template-columns:auto auto;justify-content:space-between;padding:14px 0}
+ .utility-links,.segment-nav,.nav-row{display:none}
+ .burger{display:block}
+ .hero{padding:20px 0 23px}
+ .hero h1{font-size:34px}
+ .hero p{font-size:15px}
+ .progress-item span{display:none}
+ .progress-item i{width:34px;height:34px;font-size:15px}
+ .progress-item:not(:last-child):after{top:16px;left:calc(50% + 23px);width:calc(100% - 46px)}
+ .progress{padding:16px 0}
+ .split,.radios.cols2,.checks.cols2{grid-template-columns:1fr}
+ .radios.yesno{width:100%}
+ .main-card{padding:22px 19px}
+ h2{font-size:28px}
+ .actions{flex-direction:column;align-items:stretch}
+ .btn{width:100%}
+ .side{display:none}
+ .footer .shell{flex-direction:column;align-items:flex-start;gap:14px}
+ .footer-note{text-align:left}
+ .footer-logo{width:155px}
+ .mobile-only{display:block}
+}
+</style>
+</head>
+<body>
+<div class="utility"><div class="shell"><div class="utility-benefits"><span><i class="ico" data-icon="geen-winstoogmerk"></i><i>Geen winstoogmerk</i></span><span><i class="ico" data-icon="leden"></i><i>Meer dan 1,8 miljoen trouwe leden</i></span><span><i class="ico" data-icon="winkels"></i><i>Altijd in de buurt met 110 winkels</i></span></div><span class="badge">Prototype</span></div></div>
+<header class="header"><div class="shell"><a class="logo" href="https://www.unive.nl/zakelijk" aria-label="Univé Zakelijk - naar home"><img src="https://www.unive.nl/assets/images/unive-logo.svg" alt="Univé" onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block'"><span class="logo-fallback">univé</span></a><div class="utility-links"><span><i class="ico" data-icon="schade-melden"></i>Schade melden</span><span><i class="ico" data-icon="klantenservice"></i>Klantenservice</span><span><i class="ico" data-icon="winkels"></i>Winkels</span><span><i class="ico" data-icon="mijn-unive"></i>Mijn Univé<i class="chev"></i></span></div><div class="segment-nav" aria-label="Doelgroep"><span>Particulier</span><span class="active">Zakelijk</span></div><div class="nav-row"><nav class="nav" aria-label="Hoofdnavigatie"><span class="nav-item">Verzekeringen<i class="chev"></i></span><span class="nav-item">Jouw bedrijf<i class="chev"></i></span><span class="nav-item">Inspiratie &amp; voordeel<i class="chev"></i></span></nav><div class="header-search"><svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><line x1="16.2" y1="16.2" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input type="search" placeholder="zoeken op unive.nl" aria-label="Zoeken op Zakelijk"><span class="search-btn" aria-hidden="true"></span></div></div><button class="burger" type="button" aria-label="Menu"><span></span><span></span><span></span></button></div></header>
+<section class="hero"><div class="shell"><div class="crumbs" style="font-family: Open Sans; font-weight: 600">Home &nbsp;›&nbsp; Zakelijk &nbsp;›&nbsp; Gebouwenverzekering</div><h1>Gebouwenverzekering</h1></div></section>
+<div class="progress-wrap"><div class="shell"><div class="progress" id="progress"></div></div></div>
+
+<main class="shell layout">
+  <section class="card main-card" id="main" aria-live="polite"></section>
+  <aside class="side">
+    <section class="card side-card side-card--flat help-card"><h3>Heb je hulp nodig?</h3><p style="font-family: Open Sans; color: #0a0a0a; font-size: 16px">Wij helpen je graag verder!</p>
+      <a class="help-phone" href="tel:+312345678"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6.6 10.8C8.1 13.8 10.2 15.9 13.2 17.4L15.5 15.1C15.8 14.8 16.3 14.7 16.7 14.9C18 15.4 19.4 15.7 20.9 15.8C21.5 15.8 22 16.3 22 16.9V20.9C22 21.5 21.5 22 20.9 22C10.4 22 2 13.6 2 3.1C2 2.5 2.5 2 3.1 2H7.1C7.7 2 8.2 2.5 8.2 3.1C8.3 4.6 8.6 6 9.1 7.3C9.3 7.7 9.2 8.2 8.9 8.5L6.6 10.8Z" fill="currentColor"/></svg><strong>+312345678</strong></a>
+      <span class="help-hours" style="font-size: 12px">Bereikbaar op werkdagen van 09.00 tot 17.00 uur</span>
+    </section>
+    <ul class="usp-list">
+      <li><img src="icons/USP.svg" alt=""><span>USP 1</span></li>
+      <li><img src="icons/USP.svg" alt=""><span>USP 2</span></li>
+      <li><img src="icons/USP.svg" alt=""><span>USP 3</span></li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="footer"><div class="shell"><div class="footer-brand"><img class="footer-logo" src="https://www.unive.nl/assets/images/unive-logo-payoff.svg" alt="Univé, daar plukt ú de vruchten van" onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block'"><span class="footer-logo-fallback">univé<small>daar plukt ú de vruchten van</small></span></div><div class="footer-proto"><select class="footer-proto-select" id="scenario-select"><option value="">Testscenario…</option><option value="office">Kantoor</option><option value="horeca">Horeca</option><option value="storage">Opslag / groothandel</option><option value="vve">VvE</option><option value="agri">Agrarisch / landbouw</option></select><button class="footer-proto-reset" id="reset-btn" type="button">Opnieuw beginnen</button></div></div></footer>
+
+<div class="modal" id="calc-modal" hidden><div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="calc-modal-title"><h3 id="calc-modal-title">Help me berekenen</h3><button type="button" class="modal-close" aria-label="Sluiten">✕</button><div class="split"><div class="field"><label class="label" for="calc-area">Wat is de oppervlakte?</label><input class="input" id="calc-area" inputmode="numeric" placeholder="Bijvoorbeeld 450 m²"></div><div class="field"><label class="label" for="calc-floors">Hoeveel verdiepingen heeft het gebouw?</label><input class="input" id="calc-floors" inputmode="numeric" placeholder="Bijvoorbeeld 2"></div></div><div class="calc-result" id="calc-result"><span>Indicatieve herbouwwaarde</span><strong id="calc-amount"></strong><p class="calc-disclaimer">Dit is een indicatie op basis van algemene kengetallen, geen taxatie.</p></div></div></div>
+<div class="modal" id="info-modal" hidden><div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="info-modal-title"><h3 id="info-modal-title"></h3><button type="button" class="modal-close" aria-label="Sluiten">✕</button><p id="info-modal-text"></p></div></div>
+
+<script>
+(() => {
+"use strict";
+const ER_OPTIONS=[0,250,500,1000,2500,5000,10000,25000,50000];
+const STEPS=[
+ {id:"company",group:"Basisgegevens"},{id:"address",group:"Basisgegevens"},
+ {id:"building1",group:"Gebouw"},{id:"building2",group:"Gebouw"},{id:"building3",group:"Gebouw"},{id:"risk1",group:"Aanvullende gegevens"},{id:"risk2",group:"Aanvullende gegevens"},{id:"premium",group:"Premie"},{id:"contact",group:"Contact"},
+ {id:"summary",group:"Contact"},{id:"done",group:"Contact"}
+];
+const GROUPS=["Basisgegevens","Gebouw","Aanvullende gegevens","Premie","Contact"];
+const DEST_GROUPS={
+ "Kantoor":["Kantoor - Kantoor"],
+ "Horeca":["Horeca - Cafe","Horeca - Cafetaria / snackbar","Horeca - Lunchroom","Horeca - Restaurant","Horeca - Overig horeca"],
+ "Winkel / showroom":["Detailhandel: Winkel / showroom - Detailhandel: Winkel / showroom"],
+ "Opslag / groothandel":["MKB Opslag / Groothandel - MKB Opslag / Groothandel"],
+ "MKB / bedrijfsgebouw":["MKB Overig - Bedrijfsgebouw MKB","MKB Overig - Bedrijfsverzamelgebouw","MKB Overig - Bouwnijverheid","MKB Overig - Drukkerij","MKB Overig - Garage","MKB Overig - Houtbewerking / aannemer","MKB Overig - Hoveniersbedrijf","MKB Overig - Installatiebedrijf","MKB Overig - Landbouwmechanisatie","MKB Overig - Loon en Grondverzet bedrijven","MKB Overig - Overig MKB overig"],
+ "Productie / assemblage":["MKB Productie / Assemblage - Hout","MKB Productie / Assemblage - Kunststof","MKB Productie / Assemblage - Metaal","MKB Productie / Assemblage - Natuurlijke stoffen","MKB Productie / Assemblage - Overig MKB Productie / Assemblage"],
+ "Publiek / recreatie":["Publiek gebouw / recreatie - Campinggebouw","Publiek gebouw / recreatie - Dorpshuis / Multifunctioneel centrum","Publiek gebouw / recreatie - Kampeerboerderij / Groepsaccommodatie","Publiek gebouw / recreatie - Kerk","Publiek gebouw / recreatie - Kinderopvang / Peuterspeelzaal","Publiek gebouw / recreatie - Museum","Publiek gebouw / recreatie - Praktijkruimte","Publiek gebouw / recreatie - School","Publiek gebouw / recreatie - Sporthal","Publiek gebouw / recreatie - Verenigingsgebouw","Publiek gebouw / recreatie - Zorgboerderij","Publiek gebouw / recreatie - Zwembad","Publiek gebouw / recreatie - Overig publiek gebouw / recreatie"],
+ "Verhuur woningen / kamers":["Verhuur woningen / Kamerverhuur - Aantal 1","Verhuur woningen / Kamerverhuur - Aantal 2 of meer","Verhuur woningen / Kamerverhuur - Kamerbewoning"],
+ "VvE":["VVE - Alleen bedrijven","VVE - Alleen wonen","VVE - Wonen 1e lijn zorg","VVE - Wonen en bedrijven","VVE - Wonen en winkel"],
+ "Agrarisch":["Agrarisch - Bedrijfsgedeelte (traditionele) boerderij","Agrarisch - Bewaarschuur","Agrarisch - Boerderij (achterhuis)","Agrarisch - Boerderij","Agrarisch - Boerderij (voorhuis)","Agrarisch - Caravanstalling","Agrarisch - Gebouwencomplex (akkerbouw / bollen)","Agrarisch - Hooiberg","Agrarisch - Kapschuur","Agrarisch - Ligboxenstal","Agrarisch - Manege / rijhal","Agrarisch - Overig agrarisch","Agrarisch - Paardenstalling","Agrarisch - Pluimveeschuur","Agrarisch - Schuur / loods","Agrarisch - Silo (overig)","Agrarisch - (Mest)silo","Agrarisch - Varkensschuur","Agrarisch - Veeschuur","Agrarisch - Verwerkingsschuur (akkerbouw / bollen)","Agrarisch - Vleeskalverschuur","Agrarisch - Werktuigenberging"]
+};
+const COMPANIES=[
+ {id:"c1",trade:"Univé Advies B.V.",official:"Univé Advies B.V.",kvk:"05012345",vest:"000019991111",address:"Jan Bommerstraat 4",postcode:"9402 NR",city:"Assen",sbi:"66221",activity:"Assurantietussenpersonen",destination:"Kantoor - Kantoor",confidence:"high"},
+ {id:"c2",trade:"Restaurant De Smaakmaker",official:"De Smaakmaker Horeca B.V.",kvk:"62034567",vest:"000033221100",address:"Markt 18",postcode:"8011 AB",city:"Zwolle",sbi:"56101",activity:"Restaurants",destination:"Horeca - Restaurant",confidence:"high"},
+ {id:"c3",trade:"Noord Logistiek & Opslag",official:"Noord Logistiek B.V.",kvk:"76123456",vest:"000041231231",address:"Industrieweg 12",postcode:"7903 AA",city:"Hoogeveen",sbi:"52109",activity:"Opslag in distributiecentra en overige opslag",destination:"MKB Opslag / Groothandel - MKB Opslag / Groothandel",confidence:"high"},
+ {id:"c4",trade:"VvE Parkzicht",official:"Vereniging van Eigenaars Parkzicht",kvk:"40023456",vest:"000028880001",address:"Parklaan 20",postcode:"3818 JL",city:"Amersfoort",sbi:"68322",activity:"Beheer van onroerend goed voor een vast bedrag",destination:"VVE - Alleen wonen",confidence:"medium"},
+ {id:"c5",trade:"Boerderij De Es",official:"Maatschap De Es",kvk:"08123456",vest:"000014440001",address:"Esweg 7",postcode:"9418 TE",city:"Wijster",sbi:"01410",activity:"Fokken en houden van melkvee",destination:"Agrarisch - Ligboxenstal",confidence:"medium"}
+];
+const DEFAULT_STATE=()=>({
+ step:"company",company:null,address:{same:true,street:"",postcode:"",city:""},usage:{confirmed:null,group:"",destination:""},
+ building:{year:"",rebuild:"",roofs:[],wooden:"",insulation:"",asbestos:"",vacancy:"",residential:"",residentialType:""},
+ risk:{workshop:"",industrial:"",complex:"",alarm:"",kitchen:"",floorArea:"",fireLoadInternal:"low",hay:"",openHeating:"",openSides:"",lightPanels:"",meatPoultry:"",bulbs:"",cooling:"",cellsInsulated:"",siloType:"",solar:"",solarAmount:"",basement:"",piling:""},
+ premium:{plan:"storm",brand:{er:0},storm:{er:2500},extended:{er:2500}},
+ contact:{firstName:"",lastName:"",phone:"",email:"",channel:"",timeslot:"",consent:false}
+});
+let state=DEFAULT_STATE();
+
+const $=s=>document.querySelector(s);
+const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]));
+const money=v=>new Intl.NumberFormat("nl-NL",{style:"currency",currency:"EUR",maximumFractionDigits:2}).format(v);
+function currentDestination(){return state.usage.destination || state.company?.destination || "";}
+function groupForDestination(d=currentDestination()){
+ if(d.startsWith("Agrarisch"))return"Agrarisch"; if(d.startsWith("Horeca"))return"Horeca"; if(d.startsWith("Kantoor"))return"Kantoor";
+ if(d.startsWith("MKB Opslag"))return"Opslag / groothandel"; if(d.startsWith("MKB Overig"))return"MKB / bedrijfsgebouw";
+ if(d.startsWith("MKB Productie"))return"Productie / assemblage"; if(d.startsWith("Detailhandel"))return"Winkel / showroom";
+ if(d.startsWith("Publiek"))return"Publiek / recreatie"; if(d.startsWith("Verhuur"))return"Verhuur woningen / kamers"; if(d.startsWith("VVE"))return"VvE"; return"";
+}
+function is(d,p){return d.startsWith(p)}
+function flags(){
+ const d=currentDestination();
+ return{
+  agri:is(d,"Agrarisch"),horeca:is(d,"Horeca"),office:is(d,"Kantoor"),storage:is(d,"MKB Opslag"),
+  retail:is(d,"Detailhandel"),mkb:is(d,"MKB Overig"),production:is(d,"MKB Productie"),public:is(d,"Publiek"),
+  rental:is(d,"Verhuur"),vve:is(d,"VVE")
+ };
+}
+function buildYearBand(){return state.building.year||null}
+function roofValue(){
+ const r=[...state.building.roofs].sort();
+ if(r.includes("Anders"))return"Overig";
+ const key=r.join("+");
+ const map={"Plat":"Plat","Pannen":"Pannen","Platen":"Platen","Riet":"Riet","Pannen+Plat":"Pannen-Plat","Pannen+Riet":"Riet-Pannen","Plat+Riet":"Riet-Plat","Platen+Riet":"Riet-Platen"};
+ return map[key]||"Overig";
+}
+function main(html){$("#main").innerHTML=html;window.scrollTo({top:0,behavior:"smooth"});renderProgress();renderContext()}
+function header(kicker,title,text,subtitle,subStyle){return`<h2>${title}</h2><hr class="header-divider">${subtitle?`<h3 class="header-sub"${subStyle?` style="${subStyle}"`:""}>${subtitle}</h3>`:""}<p class="lead">${text}</p>`}
+function actions(back=true,next="Verder"){return`<div class="actions${back?"":" actions-left"}"><button type="submit" class="btn btn-primary">${next}<i class="btn-ico"></i></button>${back?'<button type="button" class="btn-back" data-back><i class="btn-ico"></i>Vorige</button>':''}</div>`}
+function yesNo(name,value){return`<div class="radios yesno"><label class="choice"><input type="radio" name="${name}" value="yes" ${value==="yes"?"checked":""}><span><strong>Ja</strong></span></label><label class="choice"><input type="radio" name="${name}" value="no" ${value==="no"?"checked":""}><span><strong>Nee</strong></span></label></div>`}
+function radio(name,value,options,cols=true,extraClass=""){return`<div class="radios ${cols?"cols2":""} ${extraClass}">${options.map(o=>`<label class="choice"><input type="radio" name="${name}" value="${esc(o.value)}" ${value===o.value?"checked":""}><span><strong>${esc(o.label)}</strong>${o.help?`<small>${esc(o.help)}</small>`:""}</span></label>`).join("")}</div>`}
+function subBar(step,total){return `<div class="sub-progress"><div class="sub-progress-fill" style="width:${step/total*100}%"></div></div>`}
+function bindBack(){document.querySelector("[data-back]")?.addEventListener("click",goBack)}
+const FIELD_ERROR_ICON='<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3.5 21.5 20h-19L12 3.5Z" stroke="#d0021b" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 9.5v5M12 17.5h.01" stroke="#d0021b" stroke-width="1.6" stroke-linecap="round"/></svg>';
+function clearFieldErrors(form){form.querySelectorAll(".field.has-error").forEach(f=>{f.classList.remove("has-error");f.querySelector(".field-error")?.remove()})}
+function showFieldErrors(form,names,message="Dit veld is verplicht. Vul het veld in."){clearFieldErrors(form);let any=false;names.forEach(n=>{const el=form.querySelector(`[name="${n}"]`)||form.querySelector(`#${n}`);if(!el)return;const field=el.closest(".field");if(!field||field.classList.contains("has-error"))return;field.classList.add("has-error");field.insertAdjacentHTML("beforeend",`<div class="field-error">${FIELD_ERROR_ICON}<span>${message}</span></div>`);any=true});return any}
+function next(id){state.step=id;render()}
+function goBack(){const i=STEPS.findIndex(s=>s.id===state.step);if(i>0){state.step=STEPS[i-1].id;render()}}
+function renderProgress(){
+ const idx=STEPS.findIndex(s=>s.id===state.step);const currentGroup=STEPS[Math.max(0,idx)]?.group||"Contact";
+ const cg=GROUPS.indexOf(currentGroup);
+ $("#progress").innerHTML=GROUPS.map((g,i)=>`<div class="progress-item ${i<cg?"done":i===cg?"active":""}"><i>${i+1}</i><span>${g}</span></div>`).join("");
+}
+function renderContext(){
+ const card=$("#context-card");if(!card)return;
+ const f=flags();let title="Korte uitvraag",text="We vragen alleen gegevens die nodig zijn voor de premie-inschatting.";
+ if(state.company) {title=state.company.trade;text=`KVK ${state.company.kvk} · ${state.company.activity}`;}
+ if(f.agri) text+=" De agrarische vervolgvragen worden afgestemd op het gekozen gebouwtype.";
+ card.innerHTML=`<h3>${esc(title)}</h3><p>${esc(text)}</p>`;
+}
+function render(){
+ const fn=views[state.step]||views.company;fn();
+}
+const views={};
+views.company=()=>{main(`
+ ${header("Stap 1 · Bedrijf","Basisgegevens",'<span class="lead-sm" style="font-size: 16px; width: 680px; height: 46px">Typ uw bedrijfsnaam of vul uw KVK-nummer (8 cijfers) in. Wij halen de gegevens op die nodig zijn voor uw aanvraag en vullen deze alvast voor u in.</span>',"Bedrijfsgegevens","font-size: 18px; font-family: Open Sans; font-weight: 600")}
+ <form id="f"><div class="field" style="width:50%"><label class="label label-sm" for="company-search">Bedrijfsnaam of KvK-nummer</label><div class="input-icon-wrap"><svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><line x1="16.2" y1="16.2" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input class="input" id="company-search" autocomplete="off" placeholder="Bedrijfsnaam of KvK-nummer" value="${esc(state.company?.trade||"")}"></div><div id="results" class="search-results"></div></div>${actions(false)}</form>`);
+ bindBack();const input=$("#company-search"),results=$("#results");
+ function show(q=""){if(!q.trim()){results.innerHTML="";return}const term=q.toLowerCase().trim();const list=COMPANIES.filter(c=>!term||c.trade.toLowerCase().includes(term)||c.activity.toLowerCase().includes(term)||c.city.toLowerCase().includes(term));results.innerHTML=list.map(c=>`<button type="button" class="search-result" data-id="${c.id}"><div class="result-text"><strong>${esc(c.trade)}</strong><span>KVK ${c.kvk}</span><span>${esc(c.address)}, ${esc(c.city)}</span></div><img class="result-arrow" src="icons/icon-arrow.svg" alt=""></button>`).join("")||`<div class="info warning">Geen demoresultaat gevonden. Gebruik bijvoorbeeld “Univé”, “Restaurant”, “Opslag”, “VvE” of “Boerderij”.</div>`;
+ results.querySelectorAll("[data-id]").forEach(b=>b.onclick=()=>{state.company=COMPANIES.find(c=>c.id===b.dataset.id);state.address={same:true,street:state.company.address,postcode:state.company.postcode,city:state.company.city};state.usage={confirmed:null,group:groupForDestination(state.company.destination),destination:state.company.destination};next("address")});}
+ let t;input.oninput=()=>{clearTimeout(t);results.innerHTML=input.value.trim()?'<div class="skeleton-result"></div>':'';t=setTimeout(()=>show(input.value),250)};if(input.value.trim())show(input.value);
+ $("#f").onsubmit=e=>e.preventDefault();
+};
+views.address=()=>{const c=state.company;const pred=state.company.destination;const label=pred.split(" - ").slice(1).join(" - ")||pred;main(`
+ ${header("Stap 1 · Gebouw","Basisgegevens",'<span style="font-size: 16px">Typ uw bedrijfsnaam of vul uw KVK-nummer (8 cijfers) in. Wij halen de gegevens op die nodig zijn voor uw aanvraag en vullen deze alvast voor u in.</span>',"Bedrijfsgegevens","font-family: Open Sans; font-size: 18px; font-weight: 600")}
+ <form id="f"><div class="confirm-box" style="background-color: #F5F4FE"><div class="confirm-value" style="font-family: Open Sans; font-size: 16px; color: #0a0a0a; font-weight: 600">${esc(c.trade)}</div><div style="color: #0a0a0a">KVK ${c.kvk}</div><div style="color: #0a0a0a">${esc(c.address)}, ${esc(c.postcode)} ${esc(c.city)}</div></div>
+ <div class="field"><h3 class="header-sub" style="font-family: Open Sans; font-size: 16px; font-weight: 600; margin-bottom: 0">Verzekerde activiteit</h3><div style="height: 24px">${esc(label)}</div></div>
+ <div class="field"><div class="label">Is de getoonde activiteit juist?</div>${yesNo("confirmed",state.usage.confirmed===true?"yes":state.usage.confirmed===false?"no":"")}</div>
+ <div id="manual" ${state.usage.confirmed===false?"":"hidden"}><div class="field"><label class="label">Waarvoor wordt het gebouw voornamelijk gebruikt?</label><select class="select" id="group"><option value="">Kies een categorie</option>${Object.keys(DEST_GROUPS).map(g=>`<option ${state.usage.group===g?"selected":""}>${esc(g)}</option>`).join("")}</select></div><div class="field" id="specific-wrap" ${state.usage.group?"":"hidden"}><label class="label">Wat past het beste?</label><select class="select" id="specific"></select></div></div>
+ <div class="field"><div class="label">Wil je het gebouw op dit adres verzekeren?</div>${yesNo("same",state.address.same?"yes":"no")}</div>
+ <div id="other" ${state.address.same?"hidden":""}><div class="split"><div class="field"><label class="label">Postcode</label><input class="input" name="postcode" value="${esc(state.address.postcode)}"></div><div class="field"><label class="label">Huisnummer en toevoeging</label><input class="input" name="street" value="${state.address.same?"":esc(state.address.street)}"></div></div><div class="field"><label class="label">Plaats</label><input class="input" name="city" value="${state.address.same?"":esc(state.address.city)}"></div></div>
+ ${actions()}</form>`);
+ bindBack();document.querySelectorAll('input[name="same"]').forEach(r=>r.onchange=()=>{state.address.same=r.value==="yes";$("#other").hidden=state.address.same});
+ const manual=$("#manual"),group=$("#group"),spec=$("#specific"),wrap=$("#specific-wrap");
+ function populate(){const g=group.value;state.usage.group=g;wrap.hidden=!g||(DEST_GROUPS[g]||[]).length<=1;spec.innerHTML=(DEST_GROUPS[g]||[]).map(d=>`<option value="${esc(d)}" ${state.usage.destination===d?"selected":""}>${esc(d.split(" - ").slice(1).join(" - ")||d)}</option>`).join("");if(g&&!state.usage.destination)state.usage.destination=DEST_GROUPS[g][0];}
+ group.onchange=()=>{state.usage.destination="";populate()};spec.onchange=()=>state.usage.destination=spec.value;populate();
+ document.querySelectorAll('input[name="confirmed"]').forEach(r=>r.onchange=()=>{state.usage.confirmed=r.value==="yes";manual.hidden=state.usage.confirmed;if(state.usage.confirmed){state.usage.destination=pred;state.usage.group=groupForDestination(pred);}});
+ $("#f").onsubmit=e=>{e.preventDefault();const form=e.currentTarget;const fd=new FormData(form);const errs=[];if(!state.address.same){state.address.postcode=String(fd.get("postcode")||"").trim();state.address.street=String(fd.get("street")||"").trim();state.address.city=String(fd.get("city")||"").trim();if(!state.address.postcode)errs.push("postcode");if(!state.address.street)errs.push("street");if(!state.address.city)errs.push("city");}else{state.address.street=c.address;state.address.postcode=c.postcode;state.address.city=c.city;}if(state.usage.confirmed===null)errs.push("confirmed");if(state.usage.confirmed===false&&!state.usage.destination)errs.push("group");if(errs.length)return showFieldErrors(form,errs);next("building1")};
+};
+views.building1=()=>{main(`
+ ${subBar(1,3)}
+ ${header("Stap 2 · Gebouw","Bouwjaar en herbouwwaarde","We vragen alleen gegevens die direct nodig zijn voor de premie.")}
+ <form id="f">
+ <div class="split split-stack" style="grid-template-columns:1fr"><div class="field"><label class="label" for="year">Wat is het bouwjaar?</label><select class="select" id="year" name="year"><option value="">Kies een periode</option>${["Voor 1940","1940 - 1969","1970 - 1989","1990 - 2010","Na 2010","Onbekend"].map(x=>`<option ${state.building.year===x?"selected":""}>${x}</option>`).join("")}</select></div>
+ <div class="field"><label class="label" for="rebuild">Wat is de herbouwwaarde?<span class="info-wrap"><button type="button" class="info-btn" data-title="Herbouwwaarde" aria-label="Meer informatie over de herbouwwaarde">i</button><span class="info-pop">Het bedrag om het gebouw op dezelfde plek opnieuw op te bouwen; niet de WOZ- of verkoopwaarde.</span></span></label><input class="input" id="rebuild" name="rebuild" inputmode="numeric" value="${esc(state.building.rebuild)}" placeholder="€ 1.250.000"><button type="button" class="text-link" id="calc-open">Help me berekenen</button></div></div>
+ ${actions()}</form>`);
+ bindBack();
+ $("#f").onsubmit=e=>{e.preventDefault();const form=e.currentTarget;const fd=new FormData(form);state.building.year=String(fd.get("year")||"").trim();state.building.rebuild=String(fd.get("rebuild")||"").replace(/[^0-9]/g,"");const errs=[];if(!state.building.year)errs.push("year");if(!state.building.rebuild)errs.push("rebuild");if(errs.length)return showFieldErrors(form,errs);next("building2")};
+};
+views.building2=()=>{const f=flags();const excludedIns=f.rental||(f.vve&&(currentDestination().includes("Alleen wonen")||currentDestination().includes("Wonen 1e lijn zorg")));const showAsbestos=state.building.year&&state.building.year!=="Na 2010";main(`
+ ${subBar(2,3)}
+ ${header("Stap 2 · Gebouw","Constructie","We vragen alleen gegevens die direct nodig zijn voor de premie.")}
+ <form id="f">
+ <div class="field"><div class="label">Welke dakbedekking heeft het gebouw?</div><div class="checks checks-list">${["Plat","Pannen","Platen","Riet","Anders"].map(r=>`<label class="choice"><input type="checkbox" name="roof" value="${r}" ${state.building.roofs.includes(r)?"checked":""}><span><strong>${r==="Pannen"?"Dakpannen":r==="Platen"?"Dakplaten":r==="Riet"?"Rieten dak":r==="Plat"?"Plat dak":"Anders"}</strong></span></label>`).join("")}</div><div class="hint">Je kunt maximaal twee soorten kiezen.</div></div>
+ <div class="field"><div class="label">Bestaan de buitenwanden geheel of gedeeltelijk uit hout?</div>${yesNo("wooden",state.building.wooden)}</div>
+ ${excludedIns?"":`<div class="field"><div class="label">Is er brandbaar isolatiemateriaal in het dak of de buitenwanden verwerkt?</div>${yesNo("insulation",state.building.insulation)}</div>`}
+ <div id="asbestos-wrap" ${showAsbestos?"":"hidden"}><div class="field"><div class="label">Is er asbest in of aan het gebouw aanwezig?</div>${yesNo("asbestos",state.building.asbestos)}</div></div>
+ ${actions()}</form>`);
+ bindBack();
+ const roofBoxes=[...document.querySelectorAll('input[name="roof"]')];roofBoxes.forEach(b=>b.onchange=()=>{if(b.checked&&b.value==="Anders")roofBoxes.filter(x=>x!==b).forEach(x=>x.checked=false);if(b.checked&&b.value!=="Anders"){const a=roofBoxes.find(x=>x.value==="Anders");if(a)a.checked=false;}const checked=roofBoxes.filter(x=>x.checked);if(checked.length>2){b.checked=false;alert("Kies maximaal twee soorten dakbedekking.");}});
+ $("#f").onsubmit=e=>{e.preventDefault();const form=e.currentTarget;const fd=new FormData(form);state.building.roofs=fd.getAll("roof");state.building.wooden=String(fd.get("wooden")||"");state.building.insulation=excludedIns?"":String(fd.get("insulation")||"");state.building.asbestos=showAsbestos?String(fd.get("asbestos")||""):"";const errs=[];if(!state.building.roofs.length)errs.push("roof");if(!state.building.wooden)errs.push("wooden");if(!excludedIns&&!state.building.insulation)errs.push("insulation");if(showAsbestos&&!state.building.asbestos)errs.push("asbestos");if(errs.length)return showFieldErrors(form,errs);next("building3")};
+};
+views.building3=()=>{const f=flags();main(`
+ ${subBar(3,3)}
+ ${header("Stap 2 · Gebouw","Gebruik en staat","We vragen alleen gegevens die direct nodig zijn voor de premie.")}
+ <form id="f">
+ <div class="field"><div class="label">${f.vve||f.rental?"Staat meer dan de helft van het gebouw leeg?":"Staat het gebouw leeg?"}</div>${yesNo("vacancy",state.building.vacancy)}</div>
+ ${(!f.vve&&!f.rental&&!(f.agri&&["Agrarisch - Ligboxenstal","Agrarisch - Veeschuur","Agrarisch - Vleeskalverschuur","Agrarisch - Pluimveeschuur","Agrarisch - Hooiberg","Agrarisch - Varkensschuur"].includes(currentDestination())))?`<div class="field"><div class="label">Wordt er ook in het gebouw gewoond?</div>${yesNo("residential",state.building.residential)}</div><div id="res-type" ${state.building.residential==="yes"?"":"hidden"}><div class="field"><div class="label">Welke situatie past het beste?</div>${radio("residentialType",state.building.residentialType,[{value:"owner",label:"Eigenaar / ondernemer woont in het gebouw"},{value:"rooms",label:"Er worden kamers verhuurd"},{value:"other",label:"Andere bewoning"}],false,"radios-list")}</div></div>`:""}
+ ${actions()}</form>`);
+ bindBack();
+ document.querySelectorAll('input[name="residential"]').forEach(r=>r.onchange=()=>{$("#res-type").hidden=r.value!=="yes"});
+ $("#f").onsubmit=e=>{e.preventDefault();const form=e.currentTarget;const fd=new FormData(form);state.building.vacancy=String(fd.get("vacancy")||"");const errs=[];if(!state.building.vacancy)errs.push("vacancy");if(document.querySelector('input[name="residential"]')){state.building.residential=String(fd.get("residential")||"");state.building.residentialType=state.building.residential==="yes"?String(fd.get("residentialType")||""):"";if(!state.building.residential)errs.push("residential");if(state.building.residential==="yes"&&!state.building.residentialType)errs.push("residentialType");}if(errs.length)return showFieldErrors(form,errs);next("risk1")};
+};
+function riskConditionalHtml(){const f=flags(),d=currentDestination();const roofPlates=state.building.roofs.includes("Platen");const agOpenSides=["Agrarisch - Werktuigenberging","Agrarisch - Kapschuur","Agrarisch - Caravanstalling","Agrarisch - Schuur / loods","Agrarisch - Overig agrarisch"].includes(d);const agBulbs=["Agrarisch - Bewaarschuur","Agrarisch - Verwerkingsschuur (akkerbouw / bollen)","Agrarisch - Gebouwencomplex (akkerbouw / bollen)","Agrarisch - Boerderij (achterhuis)","Agrarisch - Overig agrarisch"].includes(d);const agBasement=["Agrarisch - Ligboxenstal","Agrarisch - Veeschuur","Agrarisch - Vleeskalverschuur","Agrarisch - Varkensschuur"].includes(d);
+ let conditional="";
+ if(f.retail||f.storage||f.agri)conditional+=`<div class="field"><div class="label">Is er een werkplaats in of bij het gebouw?</div>${yesNo("workshop",state.risk.workshop)}</div>`;
+ if(f.office)conditional+=`<div class="field"><div class="label">Is het gebouw een portable (verplaatsbare unit)?</div>${yesNo("portable",state.risk.portable)}</div>`;
+ if(f.retail)conditional+=`<div class="field"><div class="label">Ligt het gebouw op een industrieterrein?</div>${yesNo("industrial",state.risk.industrial)}</div>`;
+ if(f.office||f.storage||f.mkb||f.production||f.public)conditional+=`<div class="field"><div class="label">Is het gebouw onderdeel van een bedrijfsverzamelgebouw?</div>${yesNo("complex",state.risk.complex)}</div>`;
+ if(f.horeca)conditional+=`<div class="field"><div class="label">Is er een alarmsysteem in het gebouw?</div>${yesNo("alarm",state.risk.alarm)}</div>`;
+ if(f.horeca||f.public)conditional+=`<div class="field"><div class="label">Is er een keuken in het gebouw?</div>${yesNo("kitchen",state.risk.kitchen)}</div>`;
+ if(f.storage)conditional+=`<div class="field"><div class="label">Hoe groot is het gebouw?</div>${radio("floorArea",state.risk.floorArea,[{value:"lt1000",label:"Minder dan 1.000 m²"},{value:"1000to2500",label:"1.000 tot en met 2.500 m²"},{value:"gt2500",label:"Meer dan 2.500 m²"}],false,"radios-list")}</div><div class="field"><div class="label">Wat is de vuurbelasting van het gebouw?</div>${radio("fireLoadInternal",state.risk.fireLoadInternal,[{value:"low",label:"Laag"},{value:"medium",label:"Middel"},{value:"high",label:"Hoog"},{value:"veryhigh",label:"Zeer hoog"}],false,"radios-list")}</div>`;
+ if(f.agri){
+  if(!["Agrarisch - Varkensschuur","Agrarisch - Pluimveeschuur"].includes(d))conditional+=`<div class="field"><div class="label">Is er meer dan 40 m³ hooi of stro in of bij het gebouw aanwezig?</div>${yesNo("hay",state.risk.hay)}</div>`;
+  conditional+=`<div class="field"><div class="label">Wordt het gebouw verwarmd met een toestel met open vlam?</div>${yesNo("openHeating",state.risk.openHeating)}</div>`;
+  if(agOpenSides)conditional+=`<div class="field"><div class="label">Heeft het gebouw één of meer open zijden?</div>${yesNo("openSides",state.risk.openSides)}</div>`;
+  if(roofPlates)conditional+=`<div class="field"><div class="label">Heeft het dak lichtplaten of een open nok?</div>${yesNo("lightPanels",state.risk.lightPanels)}</div>`;
+  if(d==="Agrarisch - Pluimveeschuur")conditional+=`<div class="field"><div class="label">Wordt er vleespluimvee gehouden?</div>${yesNo("meatPoultry",state.risk.meatPoultry)}</div>`;
+  if(agBulbs)conditional+=`<div class="field"><div class="label">Worden er bloembollen opgeslagen of verwerkt?</div>${yesNo("bulbs",state.risk.bulbs)}</div><div class="field"><div class="label">Wordt het gebouw gebruikt voor gekoelde bewaring?</div>${yesNo("cooling",state.risk.cooling)}</div><div id="cells-wrap" ${state.risk.cooling==="yes"?"":"hidden"}><div class="field"><div class="label">Zijn de bewaarcellen geïsoleerd?</div>${yesNo("cellsInsulated",state.risk.cellsInsulated)}</div></div>`;
+  if(d==="Agrarisch - (Mest)silo")conditional+=`<div class="field"><label class="label">Wat voor silo is het?</label><select class="select" name="siloType"><option value="">Kies type</option>${["Beton / harde kap","Beton / zonder kap","Staal-hout / kunststof kap","Staal-hout / harde kap","Staal-hout / zonder kap","Mestzak / gaasmatsilo","Foliebassin"].map(x=>`<option ${state.risk.siloType===x?"selected":""}>${x}</option>`).join("")}</select></div><div class="field"><div class="label">Is de silo gefundeerd op heipalen?</div>${yesNo("piling",state.risk.piling)}</div>`;
+  if(agBasement)conditional+=`<div class="field"><label class="label">Onderkelderd?</label><select class="select" name="basement"><option value="">Kies een deel</option>${["0%","25%","50%","75%","100%"].map(x=>`<option ${state.risk.basement===x?"selected":""}>${x}</option>`).join("")}</select></div>`;
+ }
+ return conditional;
+}
+views.risk1=()=>{const conditional=riskConditionalHtml();
+ main(`${subBar(1,2)}${header("Stap 3 · Aanvullende gegevens","Aanvullende gegevens","De vragen hieronder zijn automatisch afgestemd op het gebruik van dit gebouw.")}<form id="f">${conditional}
+ <div class="field"><div class="label">Is er een geldig scope-10 rapport aanwezig?<span class="info-wrap"><button type="button" class="info-btn" data-title="Scope-10 rapport" aria-label="Meer informatie over het scope-10 rapport">i</button><span class="info-pop">Meer uitleg volgt.</span></span></div>${radio("scope10",state.risk.scope10,[{value:"yes",label:"Ja"},{value:"no",label:"Nee"},{value:"unknown",label:"Weet ik niet"}],false,"radios-list")}</div>
+ ${actions()}</form>`);
+ bindBack();document.querySelectorAll('input[name="cooling"]').forEach(r=>r.onchange=()=>{$("#cells-wrap").hidden=r.value!=="yes"});
+ $("#f").onsubmit=e=>{e.preventDefault();const form=e.currentTarget;const fd=new FormData(form);const names=["workshop","portable","industrial","complex","alarm","kitchen","floorArea","fireLoadInternal","hay","openHeating","openSides","lightPanels","meatPoultry","bulbs","cooling","cellsInsulated","siloType","piling","basement","scope10"];names.forEach(n=>{if(document.querySelector(`[name="${n}"]`))state.risk[n]=String(fd.get(n)||"")});const required=[...form.querySelectorAll('[name]')].filter(el=>!el.closest("[hidden]")).map(el=>el.name).filter((n,i,a)=>a.indexOf(n)===i);const errs=required.filter(n=>!String(fd.get(n)||"").trim());if(errs.length)return showFieldErrors(form,errs,"Beantwoord deze vraag om verder te gaan.");next("risk2")};
+};
+views.risk2=()=>{
+ main(`${subBar(2,2)}${header("Stap 3 · Aanvullende gegevens","Aanvullende gegevens","De vragen hieronder zijn automatisch afgestemd op het gebruik van dit gebouw.")}<form id="f">
+ <h3 class="section-title">Zonnepanelen</h3><div class="field"><div class="label">Hoeveel zonnepanelen liggen er op of bij het gebouw?</div>${radio("solar",state.risk.solar,[{value:"none",label:"Geen zonnepanelen"},{value:"lt50",label:"Minder dan 50"},{value:"50to200",label:"50 tot en met 200"},{value:"gt200",label:"Meer dan 200"}],false,"radios-list")}</div>
+ <div id="solar-amount" ${state.risk.solar&&state.risk.solar!=="none"?"":"hidden"}><div class="field"><label class="label">Wat is de waarde van de zonnepaneleninstallatie?</label><input class="input" name="solarAmount" inputmode="numeric" value="${esc(state.risk.solarAmount)}" placeholder="€ 75.000"><div class="hint">Vul het bedrag in waarvoor de zonnepaneleninstallatie verzekerd moet worden. Dit staat mogelijk op de aankoop- of installatiefactuur.</div></div>
+ <div class="field"><div class="label">Is er een geldig scope-12 rapport aanwezig?<span class="info-wrap"><button type="button" class="info-btn" data-title="Scope-12 rapport" aria-label="Meer informatie over het scope-12 rapport">i</button><span class="info-pop">Meer uitleg volgt.</span></span></div>${radio("scope12",state.risk.scope12,[{value:"yes",label:"Ja"},{value:"no",label:"Nee"},{value:"unknown",label:"Weet ik niet"}],false,"radios-list")}</div></div>${actions(true,"Bekijk premie-inschatting")}</form>`);
+ bindBack();document.querySelectorAll('input[name="solar"]').forEach(r=>r.onchange=()=>{const show=r.value!=="none";$("#solar-amount").hidden=!show});
+ $("#f").onsubmit=e=>{e.preventDefault();const form=e.currentTarget;const fd=new FormData(form);const names=["solar","scope12"];names.forEach(n=>{if(document.querySelector(`[name="${n}"]`))state.risk[n]=String(fd.get(n)||"")});state.risk.solarAmount=String(fd.get("solarAmount")||"").replace(/[^0-9]/g,"");const required=[...form.querySelectorAll('[name]')].filter(el=>!el.closest("[hidden]")).map(el=>el.name).filter((n,i,a)=>a.indexOf(n)===i);const errs=required.filter(n=>{if(n==="solarAmount"&&state.risk.solar==="none")return false;return!String(fd.get(n)||"").trim()});if(errs.length)return showFieldErrors(form,errs,"Beantwoord deze vraag om verder te gaan.");next("premium")};
+};
+function premiumBase(){
+ let v=Math.max(100000,Number(state.building.rebuild)||0);let annual=v*.00165;const f=flags();
+ if(f.horeca)annual*=1.28;if(f.storage)annual*=1.18;if(f.agri)annual*=1.22;if(state.building.wooden==="yes")annual*=1.18;if(state.building.insulation==="yes")annual*=1.12;if(state.building.roofs.includes("Riet"))annual*=1.35;if(state.building.vacancy==="yes")annual*=1.16;if(state.risk.solar!=="none")annual*=1.03;
+ return annual/12;
+}
+function erFactor(er,standard){const ratio=(Number(er)||0)/standard;if(ratio>=10)return .78;if(ratio>=5)return .84;if(ratio>=2.5)return .91;if(ratio>=1)return 1;if(ratio>=.5)return 1.07;if(ratio>0)return 1.13;return 1.22}
+function premiumPrices(){const b=premiumBase();return{brand:b*.72*erFactor(state.premium.brand.er,5000),storm:b*.94*erFactor(state.premium.storm.er,1000),extended:b*1.16*erFactor(state.premium.extended.er,1000)}}
+function erSelect(key){const val=state.premium[key].er;return`<select class="select er" data-key="${key}">${ER_OPTIONS.map(x=>`<option value="${x}" ${Number(val)===x?"selected":""}>${money(x).replace(",00","")}</option>`).join("")}</select><div class="recalc" id="recalc-${key}"></div>`}
+views.premium=()=>{const p=premiumPrices();main(`${header("Stap 4 · Premie","Kies je dekking","De premie is gebaseerd op de door jou opgegeven herbouwwaarde.")}
+ <div class="premium-grid">
+ <div class="premium-col">
+ <div class="premium-ribbon" style="visibility:hidden">Meest gekozen</div>
+ <article class="premium-card ${state.premium.plan==="brand"?"selected":""}" data-plan="brand" role="radio" aria-checked="${state.premium.plan==="brand"}" tabindex="0"><div class="premium-head"><div class="card-select-dot"></div><h3 style="font-family: Open Sans; font-weight: 600; color: #0a0a0a">Brand</h3><div class="price" id="price-brand" style="font-family: Open Sans; font-weight: 600; font-size: 16px">${money(p.brand)} <small>p/m</small></div></div><div class="premium-body"><p style="font-family: Open Sans; color: #0a0a0a">Dekking voor schade door onder andere brand en bliksem.</p><div class="premium-divider"></div><div class="er-row"><label class="label">Eigen risico</label>${erSelect("brand").replace(`<div class="recalc" id="recalc-brand"></div>`,``)}</div></div></article>
+ </div>
+ <div class="premium-col">
+ <div class="premium-ribbon">Meest gekozen</div>
+ <article class="premium-card featured ${state.premium.plan==="storm"?"selected":""}" data-plan="storm" role="radio" aria-checked="${state.premium.plan==="storm"}" tabindex="0"><div class="premium-head"><div class="card-select-dot"></div><h3 style="font-family: Open Sans; font-weight: 600; color: #0a0a0a">Brand &amp; Storm</h3><div class="price" id="price-storm" style="font-family: Open Sans; font-weight: 600; font-size: 16px">${money(p.storm)} <small>p/m</small></div></div><div class="premium-body"><p style="font-family: Open Sans; color: #0a0a0a">Branddekking aangevuld met schade door storm.</p><div class="premium-divider"></div><div class="er-row"><label class="label">Eigen risico</label>${erSelect("storm").replace(`<div class="recalc" id="recalc-storm"></div>`,``)}</div></div></article>
+ </div>
+ <div class="premium-col">
+ <div class="premium-ribbon" style="visibility:hidden">Meest gekozen</div>
+ <article class="premium-card ${state.premium.plan==="extended"?"selected":""}" data-plan="extended" role="radio" aria-checked="${state.premium.plan==="extended"}" tabindex="0"><div class="premium-head"><div class="card-select-dot"></div><h3 style="font-family: Open Sans; font-weight: 600; color: #0a0a0a">Uitgebreide gevaren</h3><div class="price" id="price-extended" style="font-family: Open Sans; font-weight: 600; font-size: 16px">${money(p.extended)} <small>p/m</small></div></div><div class="premium-body"><p style="font-family: Open Sans; color: #0a0a0a">Breder verzekerd voor aanvullende schadeoorzaken, zoals inbraak, vandalisme en plotselinge neerslag.</p><div class="premium-divider"></div><div class="er-row"><label class="label">Eigen risico</label>${erSelect("extended").replace(`<div class="recalc" id="recalc-extended"></div>`,``)}</div></div></article>
+ </div>
+ </div>
+ <form id="f">${actions(true,"Ga verder")}</form>`);
+ bindBack();document.querySelectorAll(".er").forEach(s=>s.onchange=()=>{const key=s.dataset.key;state.premium[key].er=Number(s.value);const rc=$(`#recalc-${key}`);if(rc)rc.innerHTML='<span class="loading"></span> Herberekenen…';setTimeout(()=>{const n=premiumPrices();$(`#price-${key}`).innerHTML=`${money(n[key])} <small>p/m</small>`;if(rc)rc.textContent="Premie bijgewerkt";},350)});
+ document.querySelectorAll(".premium-card").forEach(card=>{const select=()=>{state.premium.plan=card.dataset.plan;document.querySelectorAll(".premium-card").forEach(c=>{c.classList.toggle("selected",c===card);c.setAttribute("aria-checked",c===card)})};card.addEventListener("click",e=>{if(e.target.closest("select"))return;select()});card.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();select()}})});
+ $("#f").onsubmit=e=>{e.preventDefault();next("contact")};
+};
+views.contact=()=>{main(`${header("Stap 5 · Contact","Laat een adviseur contact opnemen","Vul je gegevens in. Een zakelijke adviseur controleert de premie-inschatting en bespreekt de mogelijkheden met je.")}
+ <form id="f"><div class="split"><div class="field"><label class="label">Voornaam</label><input class="input" name="firstName" value="${esc(state.contact.firstName)}"></div><div class="field"><label class="label">Achternaam</label><input class="input" name="lastName" value="${esc(state.contact.lastName)}"></div></div><div class="split"><div class="field"><label class="label">Telefoonnummer</label><input class="input" name="phone" value="${esc(state.contact.phone)}"></div><div class="field"><label class="label">E-mailadres</label><input class="input" type="email" name="email" value="${esc(state.contact.email)}"></div></div>
+ <div class="field"><div class="label">Welke contactvoorkeur heb je?<span class="optional">(Optioneel)</span></div>${radio("channel",state.contact.channel,[{value:"phone",label:"Telefonisch"},{value:"email",label:"Per e-mail"}],false,"radios-list")}</div>
+ <div id="phone-timeslot" ${state.contact.channel==="phone"?"":"hidden"}><div class="field"><div class="label">Welk dagdeel wil je benaderd worden door onze adviseurs?<span class="optional">(Optioneel)</span></div>${radio("timeslot",state.contact.timeslot,[{value:"9-12",label:"9:00 - 12:00"},{value:"13-17",label:"13:00 - 17:00"},{value:"18-21",label:"18:00 - 21:00"}],false,"radios-list")}</div></div>
+ <div class="field"><label class="choice"><input type="checkbox" name="consent" ${state.contact.consent?"checked":""}><span><strong>Univé mag mijn gegevens gebruiken om contact met mij op te nemen over deze premie-inschatting.</strong></span></label></div>${actions(true,"Controleren")}</form>`);
+ bindBack();document.querySelectorAll('input[name="channel"]').forEach(r=>r.onchange=()=>{$("#phone-timeslot").hidden=r.value!=="phone"});$("#f").onsubmit=e=>{e.preventDefault();const form=e.currentTarget;const fd=new FormData(form);["firstName","lastName","phone","email","channel"].forEach(n=>state.contact[n]=String(fd.get(n)||"").trim());state.contact.timeslot=state.contact.channel==="phone"?String(fd.get("timeslot")||""):"";state.contact.consent=fd.get("consent")==="on";const errs=[];if(!state.contact.firstName)errs.push("firstName");if(!state.contact.lastName)errs.push("lastName");if(!state.contact.phone)errs.push("phone");if(!state.contact.email)errs.push("email");if(!state.contact.consent)errs.push("consent");if(errs.length)return showFieldErrors(form,errs);next("summary")};
+};
+function residentialBackendValue(){
+ const f=flags(),d=currentDestination();
+ const agriNoResidential=["Agrarisch - Ligboxenstal","Agrarisch - Veeschuur","Agrarisch - Vleeskalverschuur","Agrarisch - Pluimveeschuur","Agrarisch - Hooiberg","Agrarisch - Varkensschuur"];
+ if(f.agri&&agriNoResidential.includes(d))return null;
+ if(f.rental){
+   if(d.includes("Aantal 2 of meer"))return null;
+   if(d.includes("Kamerbewoning"))return "Ja, overige kamerbewoning";
+   return "Ja, overige bewoning";
+ }
+ if(f.vve){
+   if(d.includes("Alleen bedrijven"))return "Nee";
+   return "Ja, overige bewoning";
+ }
+ if(state.building.residential==="no")return "Nee";
+ if(state.building.residential==="yes"){
+   if(state.building.residentialType==="owner")return "Ja, door verzekeringsnemer / exploitant / eigenaar";
+   if(state.building.residentialType==="rooms")return "Ja, overige kamerbewoning";
+   return "Ja, overige bewoning";
+ }
+ return null;
+}
+function backendPayload(){
+ const f=flags(),d=currentDestination();return{
+  workArea:state.address.postcode,brand:true,storm:true,extended:true,destination:d,insuredAmount:Number(state.building.rebuild),residential:residentialBackendValue(),buildingYear:buildYearBand(),roof:roofValue(),woodenWalls:state.building.wooden==="yes",
+  combustibleInsulation:state.building.insulation?state.building.insulation==="yes":null,vacancy:(f.vve||f.rental)?null:state.building.vacancy==="yes",vacancyOver50:(f.vve||f.rental)?state.building.vacancy==="yes":null,
+  asbestos:state.building.year&&state.building.year!=="Na 2010"?state.building.asbestos==="yes":null,workshop:state.risk.workshop?state.risk.workshop==="yes":null,industrialEstate:state.risk.industrial?state.risk.industrial==="yes":null,
+  alarm:state.risk.alarm?state.risk.alarm==="yes":null,businessCollectionBuilding:state.risk.complex?state.risk.complex==="yes":null,fireLoad:f.storage?state.risk.fireLoadInternal:null,portable:state.risk.portable?state.risk.portable==="yes":null,floorArea:state.risk.floorArea||null,portable:null,kitchen:state.risk.kitchen?state.risk.kitchen==="yes":null,
+  hayOver40m3:state.risk.hay?state.risk.hay==="yes":null,openHeating:state.risk.openHeating?state.risk.openHeating==="yes":null,openSides:state.risk.openSides?state.risk.openSides==="yes":null,lightPanels:state.risk.lightPanels?state.risk.lightPanels==="yes":null,
+  meatPoultry:state.risk.meatPoultry?state.risk.meatPoultry==="yes":null,flowerBulbs:state.risk.bulbs?state.risk.bulbs==="yes":null,cooling:state.risk.cooling?state.risk.cooling==="yes":null,cellsInsulated:state.risk.cellsInsulated?state.risk.cellsInsulated==="yes":null,
+  siloType:state.risk.siloType||null,solarCategory:state.risk.solar==="none"?null:state.risk.solar,solarInsuredAmount:state.risk.solar==="none"?0:Number(state.risk.solarAmount),basement:state.risk.basement||null,piling:state.risk.piling?state.risk.piling==="yes":null,
+  compensationBasis:"Herbouwwaarde, premier risque",deductibleBrand:state.premium.brand.er,deductibleStorm:state.premium.storm.er,deductibleExtended:state.premium.extended.er
+ };
+}
+const RISK_LABELS={workshop:"Werkplaats in of bij het gebouw",portable:"Portable (verplaatsbare unit)",industrial:"Ligging op industrieterrein",complex:"Onderdeel van bedrijfsverzamelgebouw",alarm:"Alarmsysteem aanwezig",kitchen:"Keuken in het gebouw",hay:"Meer dan 40 m³ hooi of stro aanwezig",openHeating:"Verwarmd met open vlam",openSides:"Één of meer open zijden",lightPanels:"Lichtplaten of open nok in dak",meatPoultry:"Vleespluimvee gehouden",bulbs:"Bloembollen opgeslagen of verwerkt",cooling:"Gebruikt voor gekoelde bewaring",cellsInsulated:"Bewaarcellen geïsoleerd",piling:"Silo gefundeerd op heipalen"};
+const RISK_YESNO=new Set(["workshop","portable","industrial","complex","alarm","kitchen","hay","openHeating","openSides","lightPanels","meatPoultry","bulbs","cooling","cellsInsulated","piling"]);
+const FLOOR_AREA_LABELS={lt1000:"Minder dan 1.000 m²","1000to2500":"1.000 tot en met 2.500 m²",gt2500:"Meer dan 2.500 m²"};
+const FIRELOAD_LABELS={low:"Laag",medium:"Middel",high:"Hoog",veryhigh:"Zeer hoog"};
+const SOLAR_LABELS={none:"Geen zonnepanelen",lt50:"Minder dan 50",'50to200':"50 tot en met 200",gt200:"Meer dan 200"};
+const SCOPE_LABELS={yes:"Ja",no:"Nee",unknown:"Weet ik niet"};
+function riskSummaryRows(){
+ const condHtml=riskConditionalHtml();const rows=[];
+ for(const key of Object.keys(RISK_LABELS)){
+  if(!condHtml.includes(`name="${key}"`))continue;
+  const v=state.risk[key];if(!v)continue;
+  rows.push([RISK_LABELS[key],RISK_YESNO.has(key)?(v==="yes"?"Ja":"Nee"):v]);
+ }
+ if(condHtml.includes('name="floorArea"')&&state.risk.floorArea)rows.push(["Oppervlakte van het gebouw",FLOOR_AREA_LABELS[state.risk.floorArea]||state.risk.floorArea]);
+ if(condHtml.includes('name="fireLoadInternal"'))rows.push(["Vuurbelasting",FIRELOAD_LABELS[state.risk.fireLoadInternal]||state.risk.fireLoadInternal]);
+ if(condHtml.includes('name="siloType"')&&state.risk.siloType)rows.push(["Type silo",state.risk.siloType]);
+ if(condHtml.includes('name="basement"')&&state.risk.basement)rows.push(["Onderkelderd",state.risk.basement]);
+ if(state.risk.scope10)rows.push(["Scope-10 rapport",SCOPE_LABELS[state.risk.scope10]||state.risk.scope10]);
+ return rows;
+}
+views.summary=()=>{const p=premiumPrices();const riskRows=riskSummaryRows();main(`${header("Controleren","Klopt alles?","Controleer de belangrijkste gegevens voordat je het contactverzoek verstuurt.")}
+ <div class="summary">
+ <div class="summary-block"><h3>Bedrijf en gebouw</h3><div class="summary-body"><div class="summary-row"><span>Bedrijf</span><strong>${esc(state.company.trade)}</strong></div><div class="summary-row"><span>KvK-nummer</span><strong>${esc(state.company.kvk)}</strong></div><div class="summary-row"><span>Vestiging</span><strong>${esc(state.company.vest||"")}</strong></div><div class="summary-row"><span>Adres</span><strong>${esc(state.address.street)}, ${esc(state.address.postcode)} ${esc(state.address.city)}</strong></div><div class="summary-row"><span>Gebruik</span><strong>${esc(currentDestination().split(" - ").slice(1).join(" - ")||currentDestination())}</strong></div></div></div>
+ <div class="summary-block"><h3>Gebouwgegevens</h3><div class="summary-body"><div class="summary-row"><span>Bouwjaar</span><strong>${esc(state.building.year)}</strong></div><div class="summary-row"><span>Herbouwwaarde</span><strong>${money(Number(state.building.rebuild))}</strong></div><div class="summary-row"><span>Dakbedekking</span><strong>${esc(roofValue())}</strong></div><div class="summary-row"><span>Houten buitenwanden</span><strong>${state.building.wooden==="yes"?"Ja":state.building.wooden==="no"?"Nee":""}</strong></div>${state.building.insulation?`<div class="summary-row"><span>Brandbaar isolatiemateriaal</span><strong>${state.building.insulation==="yes"?"Ja":"Nee"}</strong></div>`:""}${state.building.asbestos?`<div class="summary-row"><span>Asbest</span><strong>${state.building.asbestos==="yes"?"Ja":"Nee"}</strong></div>`:""}<div class="summary-row"><span>${flags().vve||flags().rental?"Meer dan de helft leeg":"Gebouw staat leeg"}</span><strong>${state.building.vacancy==="yes"?"Ja":state.building.vacancy==="no"?"Nee":""}</strong></div>${state.building.residential?`<div class="summary-row"><span>Bewoning in het gebouw</span><strong>${state.building.residential==="yes"?"Ja":"Nee"}</strong></div>`:""}${state.building.residentialType?`<div class="summary-row"><span>Situatie bewoning</span><strong>${{owner:"Eigenaar / ondernemer woont in het gebouw",rooms:"Er worden kamers verhuurd",other:"Andere bewoning"}[state.building.residentialType]||state.building.residentialType}</strong></div>`:""}</div></div>
+ ${riskRows.length?`<div class="summary-block"><h3>Aanvullende gegevens</h3><div class="summary-body">${riskRows.map(([l,v])=>`<div class="summary-row"><span>${esc(l)}</span><strong>${esc(v)}</strong></div>`).join("")}</div></div>`:""}
+ <div class="summary-block"><h3>Zonnepanelen</h3><div class="summary-body"><div class="summary-row"><span>Aantal zonnepanelen</span><strong>${SOLAR_LABELS[state.risk.solar]||""}</strong></div>${state.risk.solar&&state.risk.solar!=="none"?`<div class="summary-row"><span>Waarde installatie</span><strong>${money(Number(state.risk.solarAmount))}</strong></div><div class="summary-row"><span>Scope-12 rapport</span><strong>${SCOPE_LABELS[state.risk.scope12]||""}</strong></div>`:""}</div></div>
+ <div class="summary-block"><h3>Premie-inschatting</h3><div class="summary-body"><div class="summary-row"><span>${{brand:"Brand",storm:"Brand &amp; Storm",extended:"Uitgebreide gevaren"}[state.premium.plan]}</span><strong>${money(p[state.premium.plan])} p/m</strong></div><div class="summary-row"><span>Eigen risico</span><strong>${money(state.premium[state.premium.plan].er).replace(",00","")}</strong></div></div></div>
+ <div class="summary-block"><h3>Contact</h3><div class="summary-body"><div class="summary-row"><span>Naam</span><strong>${esc(state.contact.firstName)} ${esc(state.contact.lastName)}</strong></div><div class="summary-row"><span>Telefoon</span><strong>${esc(state.contact.phone)}</strong></div><div class="summary-row"><span>E-mail</span><strong>${esc(state.contact.email)}</strong></div><div class="summary-row"><span>Contact bij voorkeur via</span><strong>${{phone:"Telefonisch",email:"E-mail"}[state.contact.channel]||state.contact.channel}</strong></div>${state.contact.timeslot?`<div class="summary-row"><span>Voorkeursmoment</span><strong>${{"9-12":"9:00 - 12:00","13-17":"13:00 - 17:00","18-21":"18:00 - 21:00"}[state.contact.timeslot]||state.contact.timeslot}</strong></div>`:""}</div></div>
+ </div><form id="f">${actions(true,"Verstuur contactverzoek")}</form>`);
+ bindBack();$("#f").onsubmit=e=>{e.preventDefault();const payload=backendPayload();sessionStorage.setItem("gbv-prototype-payload",JSON.stringify(payload));next("done")};
+};
+views.done=()=>{main(`<div class="success"><div class="success-mark">✓</div><h2>Bedankt, je premie-inschatting is verstuurd</h2><p>Een zakelijke adviseur neemt contact met je op om de gegevens te controleren en de mogelijkheden te bespreken.</p><div class="info" style="text-align:left"><strong>Er is nog geen verzekering afgesloten.</strong><br>De getoonde bedragen zijn indicatief. Er ontstaat geen dekking of polis door het versturen van dit contactverzoek.</div><button class="btn btn-secondary" id="again">Nieuwe premie-inschatting</button></div>`);$("#again").onclick=()=>{state=DEFAULT_STATE();render()}};
+
+function scenario(kind){
+ state=DEFAULT_STATE();
+ const map={office:"c1",horeca:"c2",storage:"c3",vve:"c4",agri:"c5"};const c=COMPANIES.find(x=>x.id===map[kind]);if(!c)return;
+ state.company=c;state.address={same:true,street:c.address,postcode:c.postcode,city:c.city};state.usage={confirmed:true,group:groupForDestination(c.destination),destination:c.destination};
+ state.building={year:kind==="office"?"2002":kind==="vve"?"1988":"1996",rebuild:kind==="office"?"1250000":kind==="horeca"?"850000":kind==="storage"?"2400000":kind==="vve"?"4200000":"1100000",roofs:kind==="agri"?["Platen"]:["Plat"],wooden:"no",insulation:(kind==="vve"?"":"no"),asbestos:kind==="vve"?"no":"",vacancy:"no",residential:kind==="office"?"no":"",residentialType:""};
+ state.risk.solar="none";
+ if(kind==="office")state.risk.complex="no";
+ if(kind==="horeca"){state.risk.alarm="yes";state.risk.kitchen="yes"}
+ if(kind==="storage"){state.risk.workshop="no";state.risk.complex="no";state.risk.floorArea="1000to2500"}
+ if(kind==="agri"){state.risk.workshop="yes";state.risk.hay="no";state.risk.openHeating="no";state.risk.lightPanels="no";state.risk.basement="25%"}
+ state.step="building1";render();
+}
+$("#scenario-select").onchange=e=>{if(e.target.value)scenario(e.target.value)};
+const infoModal=$("#info-modal");
+function closeInfo(){infoModal.hidden=true}
+document.addEventListener("click",e=>{
+ const btn=e.target.closest(".info-btn");
+ if(btn){$("#info-modal-title").textContent=btn.dataset.title||"Toelichting";$("#info-modal-text").textContent=btn.nextElementSibling?.textContent||"";infoModal.hidden=false;return}
+ if(e.target.closest(".modal-close")||e.target===infoModal)closeInfo();
+});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeInfo()});
+const calcModal=$("#calc-modal");
+function calcUpdate(){
+ const a=parseInt(($("#calc-area").value||"").replace(/\D/g,""),10)||450,f=parseInt(($("#calc-floors").value||"").replace(/\D/g,""),10)||1;
+ $("#calc-amount").textContent=money(Math.round(a*f*1450/1000)*1000);
+}
+document.addEventListener("click",e=>{
+ if(e.target.closest("#calc-open")){calcModal.hidden=false;calcUpdate();return}
+ if(calcModal.hidden)return;
+ if(e.target.closest("#calc-modal .modal-close")||e.target===calcModal)calcModal.hidden=true;
+});
+document.addEventListener("input",e=>{if(e.target.id==="calc-area"||e.target.id==="calc-floors")calcUpdate()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")calcModal.hidden=true});
+$("#reset-btn").onclick=()=>{state=DEFAULT_STATE();$("#scenario-select").value="";render()};
+render();
+})();
+</script>
+</body>
+</html>
