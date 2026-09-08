@@ -389,7 +389,7 @@ const DEFAULT_STATE=()=>({
  step:"company",company:null,
  address:{same:true,street:"",postcode:"",city:"",houseNumber:"",addition:""},
  usage:{confirmed:null,group:"",destination:""},
- building:{year:"",rebuild:"",roofs:[],wooden:"",insulation:"yes",asbestos:"",vacancy:"",residential:"",residentialType:"",multipleBuildings:""},
+ building:{year:"",rebuild:"",roofs:[],wooden:"",insulation:"",asbestos:"",vacancy:"",residential:"",residentialType:"",multipleBuildings:""},
  risk:{workshop:"",portable:"",industrial:"",complex:"",alarm:"",kitchen:"",floorArea:"",storedGoods:"",fireLoadInternal:"medium",scope10:"",solar:"",solarInsured:"",solarAmount:"",scope12:""},
  premium:{plan:"storm",brand:{er:0},storm:{er:2500},extended:{er:2500}},
  contact:{firstName:"",lastName:"",phone:"",email:"",channel:"",timeslot:"",consent:false},
@@ -508,7 +508,7 @@ views.building2=()=>{const f=flags();const excludedIns=f.rental||(f.vve&&(curren
  <form id="f">
  <div class="field"><div class="label">Welke dakbedekking heeft het gebouw?</div><div class="checks checks-list">${["Plat","Pannen","Platen","Riet","Anders"].map(r=>`<label class="choice"><input type="checkbox" name="roof" value="${r}" ${state.building.roofs.includes(r)?"checked":""}><span><strong>${r==="Pannen"?"Dakpannen":r==="Platen"?"Dakplaten":r==="Riet"?"Rieten dak":r==="Plat"?"Plat dak":"Anders"}</strong></span></label>`).join("")}</div><div class="hint">Je kunt maximaal twee soorten kiezen.</div></div>
  <div class="field"><div class="label">Bestaan de buitenwanden geheel of gedeeltelijk uit hout?</div>${yesNo("wooden",state.building.wooden)}</div>
- ${excludedIns?"":`<div class="field"><div class="label">Is er schuimisolatie, zoals PIR, PUR of tempex, in het dak of de buitenwanden verwerkt?<span class="info-wrap"><button type="button" class="info-btn" data-title="Isolatiemateriaal" aria-label="Meer informatie over isolatiemateriaal">i</button><span class="info-pop">Schuimisolatie zoals PIR, PUR en tempex telt hierbij mee. Glaswol en steenwol tellen hierbij niet mee.</span></span></div>${yesNo("insulation",state.building.insulation)}<div class="hint">We hebben ‘Ja’ alvast ingevuld. Pas dit aan als je zeker weet dat er alleen glaswol, steenwol of geen schuimisolatie is gebruikt.</div></div>`}
+ ${excludedIns?"":`<div class="field"><div class="label">Is er schuimisolatie, zoals PIR, PUR of tempex, in het dak of de buitenwanden verwerkt?<span class="info-wrap"><button type="button" class="info-btn" data-title="Isolatiemateriaal" aria-label="Meer informatie over isolatiemateriaal">i</button><span class="info-pop">Schuimisolatie zoals PIR, PUR en tempex telt hierbij mee. Glaswol en steenwol tellen hierbij niet mee.</span></span></div>${yesNo("insulation",state.building.insulation)}</div>`}
  <div id="asbestos-wrap" ${showAsbestos?"":"hidden"}><div class="field"><div class="label">Is er asbest in of aan het gebouw aanwezig?</div>${yesNo("asbestos",state.building.asbestos)}</div></div>
  ${actions()}</form>`);
  bindBack();
@@ -663,7 +663,7 @@ function scenario(kind){
  const map={office:"c1",horeca:"c2",storage:"c3",vve:"c4",agri:"c5"};const c=COMPANIES.find(x=>x.id===map[kind]);if(!c)return;
  state.company=c;state.address={same:true,street:c.address,postcode:c.postcode,city:c.city,houseNumber:"",addition:""};state.usage={confirmed:true,group:groupForDestination(c.destination),destination:c.destination};
  if(kind==="agri"){state.routing.advisorOnly=true;state.routing.advisorReason="agri";state.step="contact";render();return;}
- state.building={year:kind==="office"?"2002":kind==="vve"?"1988":"1996",rebuild:kind==="office"?"1250000":kind==="horeca"?"850000":kind==="storage"?"2400000":kind==="vve"?"4200000":"1100000",roofs:["Plat"],wooden:"no",insulation:(kind==="vve"?"":"yes"),asbestos:kind==="vve"?"no":"",vacancy:"no",residential:kind==="office"?"no":"",residentialType:"",multipleBuildings:"no"};
+ state.building={year:kind==="office"?"2002":kind==="vve"?"1988":"1996",rebuild:kind==="office"?"1250000":kind==="horeca"?"850000":kind==="storage"?"2400000":kind==="vve"?"4200000":"1100000",roofs:["Plat"],wooden:"no",insulation:"",asbestos:kind==="vve"?"no":"",vacancy:"no",residential:kind==="office"?"no":"",residentialType:"",multipleBuildings:"no"};
  state.risk.solar="none";
  if(kind==="office")state.risk.complex="no";
  if(kind==="horeca"){state.risk.alarm="yes";state.risk.kitchen="yes"}
