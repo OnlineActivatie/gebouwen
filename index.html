@@ -390,7 +390,7 @@ const DEFAULT_STATE=()=>({
  address:{same:true,street:"",postcode:"",city:"",houseNumber:"",addition:""},
  usage:{confirmed:null,group:"",destination:""},
  building:{year:"",rebuild:"",roofs:[],wooden:"",insulation:"",asbestos:"",vacancy:"",residential:"",residentialType:"",multipleBuildings:""},
- risk:{workshop:"",portable:"",industrial:"",complex:"",alarm:"",kitchen:"",floorArea:"",storedGoods:"",fireLoadInternal:"medium",scope10:"",solar:"",solarInsured:"",solarAmount:"",scope12:""},
+ risk:{workshop:"",portable:"",industrial:"",complex:"",alarm:"",kitchen:"",floorArea:"",storedGoods:"",storedGoodsOther:"",fireLoadInternal:"medium",fireLoadVerificationRequired:false,scope10:"",solar:"",solarInsured:"",solarAmount:"",scope12:""},
  premium:{plan:"storm",brand:{er:0},storm:{er:2500},extended:{er:2500}},
  contact:{firstName:"",lastName:"",phone:"",email:"",channel:"",timeslot:"",consent:false},
  routing:{advisorOnly:false,advisorReason:""}
@@ -408,6 +408,21 @@ function groupForDestination(d=currentDestination()){
  if(d.startsWith("Publiek"))return"Publiek / recreatie"; if(d.startsWith("Verhuur"))return"Verhuur woningen / kamers"; if(d.startsWith("VVE"))return"VvE"; return"";
 }
 function is(d,p){return d.startsWith(p)}
+const GOODS_OPTIONS=[
+ {value:"noncombustible",label:"Metaal, steen of glas",fireLoad:"low",verify:false},
+ {value:"machines",label:"Machines en onderdelen",fireLoad:"medium",verify:false},
+ {value:"food",label:"Levensmiddelen",fireLoad:"medium",verify:false},
+ {value:"wood",label:"Hout en houtproducten",fireLoad:"high",verify:false},
+ {value:"paper",label:"Papier en karton",fireLoad:"high",verify:false},
+ {value:"textile",label:"Textiel of kleding",fireLoad:"high",verify:false},
+ {value:"plastic",label:"Kunststofproducten",fireLoad:"high",verify:true},
+ {value:"foam",label:"Schuim, matrassen of vergelijkbare producten",fireLoad:"veryhigh",verify:false},
+ {value:"mixed",label:"Verschillende soorten goederen",fireLoad:"medium",verify:true},
+ {value:"other",label:"Anders",fireLoad:"medium",verify:true},
+ {value:"unknown",label:"Weet ik niet",fireLoad:"medium",verify:true}
+];
+function goodsOption(value){return GOODS_OPTIONS.find(o=>o.value===value)||null}
+function goodsLabel(value,other=""){const o=goodsOption(value);if(!o)return"";return value==="other"&&other?`${o.label}: ${other}`:o.label}
 function flags(){
  const d=currentDestination();
  return{
@@ -535,7 +550,7 @@ function riskConditionalHtml(){const f=flags();let conditional="";
  if(f.office||f.storage||f.mkb||f.production||f.public)conditional+=`<div class="field"><div class="label">Is het gebouw onderdeel van een bedrijfsverzamelgebouw?</div>${yesNo("complex",state.risk.complex)}</div>`;
  if(f.horeca)conditional+=`<div class="field"><div class="label">Is er een alarmsysteem in het gebouw?</div>${yesNo("alarm",state.risk.alarm)}</div>`;
  if(f.horeca||f.public)conditional+=`<div class="field"><div class="label">Is er een keuken in het gebouw?</div>${yesNo("kitchen",state.risk.kitchen)}</div>`;
- if(f.storage)conditional+=`<div class="field"><div class="label">Hoe groot is het gebouw?</div>${radio("floorArea",state.risk.floorArea,[{value:"lt1000",label:"Minder dan 1.000 m²"},{value:"1000to2500",label:"1.000 tot en met 2.500 m²"},{value:"gt2500",label:"Meer dan 2.500 m²"}],false,"radios-list")}</div><div class="field"><label class="label" for="storedGoods">Wat wordt er voornamelijk in het gebouw opgeslagen?</label><textarea class="input textarea" id="storedGoods" name="storedGoods" placeholder="Bijvoorbeeld houten meubels, metalen onderdelen of verpakte levensmiddelen">${esc(state.risk.storedGoods)}</textarea><div class="hint">We gebruiken voor deze premie-inschatting een gemiddelde uitgangssituatie. Afhankelijk van de opgeslagen goederen kan de uiteindelijke premie nog veranderen.</div></div>`;
+ if(f.storage)conditional+=`<div class="field"><div class="label">Hoe groot is het gebouw?</div>${radio("floorArea",state.risk.floorArea,[{value:"lt1000",label:"Minder dan 1.000 m²"},{value:"1000to2500",label:"1.000 tot en met 2.500 m²"},{value:"gt2500",label:"Meer dan 2.500 m²"}],false,"radios-list")}</div><div class="field"><label class="label" for="storedGoods">Wat wordt er voornamelijk in het gebouw opgeslagen?</label><select class="select" id="storedGoods" name="storedGoods"><option value="">Kies wat het beste past</option>${GOODS_OPTIONS.map(o=>`<option value="${o.value}" ${state.risk.storedGoods===o.value?"selected":""}>${esc(o.label)}</option>`).join("")}</select><div class="hint">Kies de categorie die het beste past. De uiteindelijke premie kan nog veranderen na controle van de opgeslagen goederen.</div></div><div class="field" id="stored-goods-other-wrap" ${state.risk.storedGoods==="other"?"":"hidden"}><label class="label" for="storedGoodsOther">Wat wordt er dan voornamelijk opgeslagen?</label><input class="input" id="storedGoodsOther" name="storedGoodsOther" value="${esc(state.risk.storedGoodsOther)}" placeholder="Beschrijf kort de belangrijkste goederen"></div>`;
  return conditional;
 }
 views.risk1=()=>{const conditional=riskConditionalHtml();
@@ -543,7 +558,9 @@ views.risk1=()=>{const conditional=riskConditionalHtml();
  <div class="field"><div class="label">Is de elektrische installatie gekeurd volgens Scope 10?<span class="info-wrap"><button type="button" class="info-btn" data-title="Keuring elektrische installatie" aria-label="Meer informatie over Scope 10">i</button><span class="info-pop">Een Scope 10-keuring controleert de elektrische installatie op brandrisico. Weet je dit niet zeker? Kies dan ‘Weet ik niet’.</span></span></div>${radio("scope10",state.risk.scope10,[{value:"yes",label:"Ja"},{value:"no",label:"Nee"},{value:"unknown",label:"Weet ik niet"}],false,"radios-list")}</div>
  ${actions()}</form>`);
  bindBack();
- $("#f").onsubmit=e=>{e.preventDefault();const form=e.currentTarget;const fd=new FormData(form);const names=["workshop","portable","industrial","complex","alarm","kitchen","floorArea","storedGoods","scope10"];names.forEach(n=>{if(document.querySelector(`[name="${n}"]`))state.risk[n]=String(fd.get(n)||"").trim()});state.risk.fireLoadInternal="medium";const required=[...form.querySelectorAll('[name]')].filter(el=>!el.closest("[hidden]")).map(el=>el.name).filter((n,i,a)=>a.indexOf(n)===i);const errs=required.filter(n=>!String(fd.get(n)||"").trim());if(errs.length)return showFieldErrors(form,errs,"Beantwoord deze vraag om verder te gaan.");next("risk2")};
+ const storedGoodsSelect=$("#storedGoods");
+ if(storedGoodsSelect)storedGoodsSelect.onchange=()=>{state.risk.storedGoods=storedGoodsSelect.value;const wrap=$("#stored-goods-other-wrap");if(wrap)wrap.hidden=storedGoodsSelect.value!=="other";if(storedGoodsSelect.value!=="other")state.risk.storedGoodsOther=""};
+ $("#f").onsubmit=e=>{e.preventDefault();const form=e.currentTarget;const fd=new FormData(form);const names=["workshop","portable","industrial","complex","alarm","kitchen","floorArea","storedGoods","storedGoodsOther","scope10"];names.forEach(n=>{if(document.querySelector(`[name="${n}"]`))state.risk[n]=String(fd.get(n)||"").trim()});if(state.risk.storedGoods!=="other")state.risk.storedGoodsOther="";const goods=goodsOption(state.risk.storedGoods);state.risk.fireLoadInternal=goods?.fireLoad||"medium";state.risk.fireLoadVerificationRequired=goods?goods.verify:true;const required=[...form.querySelectorAll('[name]')].filter(el=>!el.closest("[hidden]")).map(el=>el.name).filter((n,i,a)=>a.indexOf(n)===i);const errs=required.filter(n=>!String(fd.get(n)||"").trim());if(errs.length)return showFieldErrors(form,errs,"Beantwoord deze vraag om verder te gaan.");next("risk2")};
 };
 views.risk2=()=>{
  main(`${subBar(2,2)}${header("Stap 3 · Aanvullende gegevens","Zonnepanelen","Vertel ons of er zonnepanelen of zonnecollectoren op of bij het gebouw zijn.")}<form id="f">
@@ -624,7 +641,7 @@ function backendPayload(){
   workArea:state.address.postcode,brand:true,storm:true,extended:true,destination:d,insuredAmount:Number(state.building.rebuild),residential:residentialBackendValue(),buildingYear:buildYearBand(),roof:roofValue(),woodenWalls:state.building.wooden==="yes",
   combustibleInsulation:state.building.insulation?state.building.insulation==="yes":null,vacancy:(f.vve||f.rental)?null:state.building.vacancy==="yes",vacancyOver50:(f.vve||f.rental)?state.building.vacancy==="yes":null,
   asbestos:state.building.year&&state.building.year!=="Na 2010"?state.building.asbestos==="yes":null,workshop:state.risk.workshop?state.risk.workshop==="yes":null,industrialEstate:state.risk.industrial?state.risk.industrial==="yes":null,
-  alarm:state.risk.alarm?state.risk.alarm==="yes":null,businessCollectionBuilding:state.risk.complex?state.risk.complex==="yes":null,fireLoad:f.storage?"medium":null,storedGoods:f.storage?state.risk.storedGoods||null:null,portable:state.risk.portable?state.risk.portable==="yes":null,floorArea:state.risk.floorArea||null,kitchen:state.risk.kitchen?state.risk.kitchen==="yes":null,
+  alarm:state.risk.alarm?state.risk.alarm==="yes":null,businessCollectionBuilding:state.risk.complex?state.risk.complex==="yes":null,fireLoad:f.storage?state.risk.fireLoadInternal:null,fireLoadVerificationRequired:f.storage?state.risk.fireLoadVerificationRequired:null,storedGoodsCategory:f.storage?state.risk.storedGoods||null:null,storedGoods:f.storage?goodsLabel(state.risk.storedGoods,state.risk.storedGoodsOther)||null:null,storedGoodsDescription:f.storage?state.risk.storedGoodsOther||null:null,portable:state.risk.portable?state.risk.portable==="yes":null,floorArea:state.risk.floorArea||null,kitchen:state.risk.kitchen?state.risk.kitchen==="yes":null,
   solarCategory:state.risk.solar==="none"?null:state.risk.solar,solarInsured:state.risk.solarInsured?state.risk.solarInsured==="yes":null,solarInsuredAmount:state.risk.solarInsured==="yes"?Number(state.risk.solarAmount):0,scope10:state.risk.scope10||null,scope12:state.risk.scope12||null,
   compensationBasis:"Herbouwwaarde, premier risque",deductibleBrand:state.premium.brand.er,deductibleStorm:state.premium.storm.er,deductibleExtended:state.premium.extended.er
  };
@@ -642,7 +659,7 @@ function riskSummaryRows(){
   rows.push([RISK_LABELS[key],RISK_YESNO.has(key)?(v==="yes"?"Ja":"Nee"):v]);
  }
  if(condHtml.includes('name="floorArea"')&&state.risk.floorArea)rows.push(["Oppervlakte van het gebouw",FLOOR_AREA_LABELS[state.risk.floorArea]||state.risk.floorArea]);
- if(condHtml.includes('name="storedGoods"')&&state.risk.storedGoods)rows.push(["Voornamelijk opgeslagen",state.risk.storedGoods]);
+ if(condHtml.includes('name="storedGoods"')&&state.risk.storedGoods)rows.push(["Voornamelijk opgeslagen",goodsLabel(state.risk.storedGoods,state.risk.storedGoodsOther)]);
  if(state.risk.scope10)rows.push(["Elektrische installatie gekeurd (Scope 10)",SCOPE_LABELS[state.risk.scope10]||state.risk.scope10]);
  return rows;
 }
@@ -668,7 +685,7 @@ function scenario(kind){
  state.risk.solar="none";
  if(kind==="office")state.risk.complex="no";
  if(kind==="horeca"){state.risk.alarm="yes";state.risk.kitchen="yes"}
- if(kind==="storage"){state.risk.workshop="no";state.risk.complex="no";state.risk.floorArea="1000to2500";state.risk.storedGoods="Verpakte handelsgoederen";state.risk.fireLoadInternal="medium"}
+ if(kind==="storage"){state.risk.workshop="no";state.risk.complex="no";state.risk.floorArea="1000to2500";state.risk.storedGoods="mixed";state.risk.fireLoadInternal="medium";state.risk.fireLoadVerificationRequired=true}
  state.step="building1";render();
 }
 $("#scenario-select").onchange=e=>{if(e.target.value)scenario(e.target.value)};
